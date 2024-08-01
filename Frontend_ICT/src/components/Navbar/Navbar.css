@@ -1,0 +1,41 @@
+nav{
+    width: 100%;
+    background: rgb(53, 31, 31) ;
+    color: whitesmoke;
+    padding: 4px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+}
+.logo{
+    width: 100px;
+}
+nav ul li {
+    display: inline-block;
+    list-style: none;
+    margin: 5px 40px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.btn{
+    background: #F5F5F5;
+    color: #212121;
+    padding: 14px 25px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    border: 0;
+    outline: 0;
+    opacity: 0.9;
+  }
+  .center-text {
+    flex: 1;
+    text-align: center;
+    font-size: 36px; 
+    font-weight: bold;
+    margin: 0; 
+  }

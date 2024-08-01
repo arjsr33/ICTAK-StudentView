@@ -1,0 +1,12 @@
+.home{
+    width: 100%;
+    min-height: 30vh;
+    background: linear-gradient(rgba(8,0,58,0.7),rgba(8,0,58,0.7)), url('../../assets/pexels-keira-burton-6146995-1920x1280.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+ 

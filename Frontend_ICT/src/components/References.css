@@ -1,0 +1,47 @@
+
+.project-container {
+    text-align: center;
+    margin-top: 25px;
+  }
+  
+  input {
+    padding: 10px;
+    margin-right: 10px;
+  }
+  
+  button {
+    padding: 10px;
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  .project-details {
+    margin-top: 30px;
+    width: 700px;
+    padding: 40px;
+    margin-left: 25px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .project-details h2 {
+    margin-bottom: 30px;
+  }
+  
+  .project-details ul {
+    list-style-type: none;
+    padding: 5px;
+  }
+  
+  .project-details li {
+    margin-bottom: 5px;
+  }
+  
+  .project-details a {
+    text-decoration: none;
+    color: blue;
+  }
+  

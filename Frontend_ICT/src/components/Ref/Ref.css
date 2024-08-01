@@ -1,0 +1,54 @@
+.weekly-reference {
+    max-width: 1400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color:#dcdcde;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .weekly-reference h2 {
+    font-size: 30px;
+    font-family:"Outfit", sans-serif;
+    margin-bottom: 20px;
+  }
+  
+  .weekly-reference select {
+    margin: 20px 0;
+    padding: 20px;
+    font-size: 20px;
+  }
+  
+  .weekly-reference p {
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
+  
+  .weekly-reference a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .weekly-reference a:hover {
+    text-decoration: underline;
+  }
+  
+  .weekly-reference button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .weekly-reference button:hover {
+    background-color: #0056b3;
+  }
+  

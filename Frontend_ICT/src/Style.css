@@ -1,0 +1,61 @@
+#logo{
+    max-width: 5%;
+    margin-left: 10px;
+ }
+ 
+ /* .navigation{
+     margin-left: 30%;
+ } */
+ 
+ /* body{
+     background-image:url(Images/library.jpg);
+ } */
+ .darkblue{
+     color: rgb(23, 23, 189);
+ }
+ 
+ .navLink:hover{
+     background-color: blue;
+     color: white;
+ }
+ 
+ .items {
+     height: 500px;
+  }
+ 
+  .formStyle{
+     margin: 2% 10% 10% 10%;
+  }
+ 
+  .dim{
+     background-color:black;
+     opacity: 70%;
+  }
+ 
+  .searchBand{
+     /* border: 2px solid red; */
+     height:70px;
+     background-color: rgb(232, 230, 230);
+     /* display: flex; */
+     /* justify-content: first baseline; */
+  }
+ 
+  .bookLink{
+     text-decoration: none;
+     /* font-style: oblique; */
+     /* color:rgb(23, 23, 189); */
+     color: darkolivegreen;
+  }
+  .bookLink:hover{
+     text-decoration-line: underline;
+     font-style: oblique;
+     color: blue;
+  }
+ 
+  #foot{
+    font-family:'Times New Roman', Times, serif;
+    background-color: lightgrey;
+    color: gray;
+    text-align: center;
+    height: fit-content;
+ }
