@@ -10,7 +10,7 @@ function ProjectOverview({p_id}) {
   // const { id } = useParams();
 
   useEffect(() => {
-    axios.get(`https://ict-student-view-server.vercel.app/api/arjun/projects/${p_id}`)
+    axios.get(`https://ictak-student-view-server.vercel.app/api/arjun/projects/${p_id}`)
       .then(response => {
         console.log('Projects fetched:', response.data);
         if (Array.isArray(response.data)) {

@@ -65,7 +65,7 @@ const Signup = () => {
     }
 
     try {
-      //   axios.get(`https://ict-student-view-server.vercel.app/salman/studentCourse/${email}`)
+      //   axios.get(`https://ictak-student-view-server.vercel.app/salman/studentCourse/${email}`)
       //   .then((res)=>{
       //       console.log(`Axios res.data(student) is - `)
       //       console.log(res.data.message)
@@ -80,7 +80,7 @@ const Signup = () => {
       //   alert('Sorry no such student in ICT!!')
       //   navigate('/login');
       // }else{
-        const result = await axios.post('https://ict-student-view-server.vercel.app/api/salman/signup', { name, email, password, phone, batch });
+        const result = await axios.post('https://ictak-student-view-server.vercel.app/api/salman/signup', { name, email, password, phone, batch });
         console.log(result);
         setSuccess('Signup successful! Redirecting to login...');
         setError('');
@@ -106,7 +106,7 @@ const Signup = () => {
   }
 }
 
-  //     const result = await axios.post('https://ict-student-view-server.vercel.app/salman/signup', { name, email, password, phone, batch });
+  //     const result = await axios.post('https://ictak-student-view-server.vercel.app/salman/signup', { name, email, password, phone, batch });
   //     console.log(result);
   //     setSuccess('Signup successful! Redirecting to login...');
   //     setError('');

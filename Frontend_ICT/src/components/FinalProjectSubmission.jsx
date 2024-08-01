@@ -16,7 +16,7 @@ const FinalProjectSubmission = ({s_id}) => {
     // }
 
     useEffect(()=>{
-      axios.get(`https://ict-student-view-server.vercel.app/api/princy/studentswithprojects/${s_id}`)
+      axios.get(`https://ictak-student-view-server.vercel.app/api/princy/studentswithprojects/${s_id}`)
       .then((res)=>{
           console.log(`Axios res.data(studentswithprojects) in WeeklySubmission is - `)
           console.log(res.data)
@@ -36,7 +36,7 @@ const FinalProjectSubmission = ({s_id}) => {
       console.log('formdata is -')
       console.log(formdata)
 
-      const result = await axios.post(`https://ict-student-view-server.vercel.app/api/princy/uploadProject/${s_id}`,
+      const result = await axios.post(`https://ictak-student-view-server.vercel.app/api/princy/uploadProject/${s_id}`,
         formdata,{headers:{"Content-Type":"multipart/form-data"}})
         .then((res)=>{
           console.log(`Axios res.data in FinalProjectSubmission is - `)

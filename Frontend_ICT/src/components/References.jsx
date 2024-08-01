@@ -10,7 +10,7 @@ const References = ({p_id}) => {
   const fetchProject = async () => {
     try {
       console.log(`${p_id}`)
-      const response = await axios.get(`https://ict-student-view-server.vercel.app/api/fathima/projects/${p_id}`);
+      const response = await axios.get(`https://ictak-student-view-server.vercel.app/api/fathima/projects/${p_id}`);
       setProject(response.data);
       setError('');
     } catch (err) {

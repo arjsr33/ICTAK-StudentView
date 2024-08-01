@@ -20,7 +20,7 @@ function ProjectDetails() {
   console.log('Student data passed as state:', studentData);
 
   useEffect(() => {
-    axios.get(`https://ict-student-view-server.vercel.app/api/arjun/projects/${id}`)
+    axios.get(`https://ictak-student-view-server.vercel.app/api/arjun/projects/${id}`)
       .then(response => {
         console.log('Projects fetched:', response.data); 
         setProjects(response.data);
@@ -59,7 +59,7 @@ function ProjectDetails() {
       start_date: new Date().toISOString() // Format date to ISO 8601
     };
 
-    axios.post('https://ict-student-view-server.vercel.app/api/princy/selectProject', projectSelection)
+    axios.post('https://ictak-student-view-server.vercel.app/api/princy/selectProject', projectSelection)
       .then(response => {
         console.log('Project selection saved:', response.data);
         goToProjectDashboard();

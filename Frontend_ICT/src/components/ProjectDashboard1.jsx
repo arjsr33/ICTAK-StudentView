@@ -23,7 +23,7 @@ const ProjectDashboard1 = () => {
   });
 
   useEffect(() => {
-    axios.get(`https://ict-student-view-server.vercel.app/api/princy/studentswithprojects/${s_id}`)
+    axios.get(`https://ictak-student-view-server.vercel.app/api/princy/studentswithprojects/${s_id}`)
       .then((res) => {
         console.log(`Axios res.data(studentswithprojects) in ProjectDashboard1 is - `);
         console.log(res.data[0]);

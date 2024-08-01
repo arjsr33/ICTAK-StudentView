@@ -15,7 +15,7 @@ const DiscussionForum = ({ s_id }) => {
   const fetchDiscussion = async () => {
     try {
       console.log(`Fetching discussion for student ID: ${s_id}`);
-      const response = await axios.get(`https://ict-student-view-server.vercel.app/api/discussion/discussion/${s_id}`);
+      const response = await axios.get(`https://ictak-student-view-server.vercel.app/api/discussion/discussion/${s_id}`);
       const discussion = response.data.questions.map(question => ({
         id: question._id,
         text: question.question,
@@ -34,7 +34,7 @@ const DiscussionForum = ({ s_id }) => {
   const handlePostQuery = async () => {
     if (newQuery.trim()) {
       try {
-        const response = await axios.post(`https://ict-student-view-server.vercel.app/api/discussion/discussion/${s_id}/question`, { question: newQuery });
+        const response = await axios.post(`https://ictak-student-view-server.vercel.app/api/discussion/discussion/${s_id}/question`, { question: newQuery });
         setQueries([...queries, {
           id: response.data.questions[response.data.questions.length - 1]._id,
           text: newQuery,
@@ -54,7 +54,7 @@ const DiscussionForum = ({ s_id }) => {
   const handleAddComment = async (queryId, comment) => {
     if (comment.trim()) {
       try {
-        await axios.post(`https://ict-student-view-server.vercel.app/api/discussion/discussion/${s_id}/question/${queryId}/answer`, { answer: comment });
+        await axios.post(`https://ictak-student-view-server.vercel.app/api/discussion/discussion/${s_id}/question/${queryId}/answer`, { answer: comment });
         setQueries(queries.map(q => 
           q.id === queryId ? { ...q, comments: [...q.comments, comment] } : q
         ));
@@ -68,7 +68,7 @@ const DiscussionForum = ({ s_id }) => {
   const handleEditQuery = async () => {
     if (newQuery.trim() && editingQueryId) {
       try {
-        const response = await axios.put(`https://ict-student-view-server.vercel.app/api/discussion/discussion/${s_id}/question/${editingQueryId}`, { questionText: newQuery });
+        const response = await axios.put(`https://ictak-student-view-server.vercel.app/api/discussion/discussion/${s_id}/question/${editingQueryId}`, { questionText: newQuery });
         setQueries(queries.map(q => q.id === editingQueryId ? { ...q, text: newQuery } : q));
         setNewQuery('');
         setEditingQueryId(null);
@@ -80,7 +80,7 @@ const DiscussionForum = ({ s_id }) => {
 
   const handleDeleteQuery = async (queryId) => {
     try {
-      await axios.delete(`https://ict-student-view-server.vercel.app/api/discussion/discussion/${s_id}/question/${queryId}`);
+      await axios.delete(`https://ictak-student-view-server.vercel.app/api/discussion/discussion/${s_id}/question/${queryId}`);
       setQueries(queries.filter(q => q.id !== queryId));
     } catch (error) {
       console.error('Error deleting query:', error);

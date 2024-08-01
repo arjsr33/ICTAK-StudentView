@@ -25,7 +25,7 @@ const StudentDashboard = () => {
     })
     const [projects,setProjects]=useState([])
     useEffect(()=>{
-        axios.get(`https://ict-student-view-server.vercel.app/api/princy/studentCourse/${s_id}`)
+        axios.get(`https://ictak-student-view-server.vercel.app/api/princy/studentCourse/${s_id}`)
         .then((res)=>{
             console.log(`Axios res.data(student) is - `)
             console.log(res.data)
@@ -35,7 +35,7 @@ const StudentDashboard = () => {
         })
     },[])
     useEffect(()=>{
-        axios.get(`https://ict-student-view-server.vercel.app/api/princy/availableProjects/${studentData.s_course}`)
+        axios.get(`https://ictak-student-view-server.vercel.app/api/princy/availableProjects/${studentData.s_course}`)
         .then((res)=>{
             console.log(`Axios res.data(projects) is - `)
             console.log(res.data)
@@ -44,7 +44,7 @@ const StudentDashboard = () => {
     },[studentData.s_course])
 
     function postStdPjt(){
-        axios.post(`https://ict-student-view-server.vercel.app/api/princy/postStdPjt`,
+        axios.post(`https://ictak-student-view-server.vercel.app/api/princy/postStdPjt`,
             {sp_id:"S0011",
             sp_name:"Shamna",
             p_id:"P004",

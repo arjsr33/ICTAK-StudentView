@@ -20,7 +20,7 @@ const WeeklySubmission = ({ s_id }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`https://ict-student-view-server.vercel.app/api/princy/studentswithprojects/${s_id}`);
+        const res = await axios.get(`https://ictak-student-view-server.vercel.app/api/princy/studentswithprojects/${s_id}`);
         console.log(`Axios res.data[0].start_date (studentswithprojects) in WeeklySubmission is - `);
         console.log(res.data[0].start_date);
         set_s_start_date(res.data[0].start_date);
@@ -66,7 +66,7 @@ const WeeklySubmission = ({ s_id }) => {
     console.log(formData);
 
     try {
-      const result = await axios.post(`https://ict-student-view-server.vercel.app/api/princy/uploadWeek/${s_id}`, formData, {
+      const result = await axios.post(`https://ictak-student-view-server.vercel.app/api/princy/uploadWeek/${s_id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       console.log(`Axios res.data(projects) is - `);
