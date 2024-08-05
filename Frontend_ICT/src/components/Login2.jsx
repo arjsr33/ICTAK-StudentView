@@ -13,7 +13,7 @@ const Login2 = () => {
     e.preventDefault();
     // navigate('/StudentDashboard ',{ state: { s_id: 'S0001' } });
     try {
-      const response = await axios.post('https://ictak-student-view-server.vercel.app/api/salman/login', { email, password });
+      const response = await axios.post('https://arjun-ictak.vercel.app/api/salman/login', { email, password });
       const { data } = response;
 
       if (data.message === "Login successful") {
