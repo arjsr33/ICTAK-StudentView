@@ -21,6 +21,12 @@ const StudentDashboard = () => {
     const token = localStorage.getItem('token'); // Retrieve the token from local storage
 
     useEffect(() => {
+        if (!token) {
+            alert('You are not logged in. Please log in.');
+            navigate('/login');
+            return;
+        }
+
         const fetchStudentData = async () => {
             try {
                 const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/studentCourse/${s_id}`, {
@@ -33,7 +39,8 @@ const StudentDashboard = () => {
             } catch (error) {
                 console.error('Error fetching student data:', error);
                 if (error.response && error.response.status === 403) {
-                    alert('Your session has expired. Please log in again.');
+                    alert('Your session has expired or you do not have permission. Please log in again.');
+                    localStorage.removeItem('token'); // Clear the token
                     navigate('/login'); // Redirect to login page if session is expired
                 }
             }
@@ -55,7 +62,8 @@ const StudentDashboard = () => {
             } catch (error) {
                 console.error('Error fetching projects:', error);
                 if (error.response && error.response.status === 403) {
-                    alert('Your session has expired. Please log in again.');
+                    alert('Your session has expired or you do not have permission. Please log in again.');
+                    localStorage.removeItem('token'); // Clear the token
                     navigate('/login'); // Redirect to login page if session is expired
                 }
             }
@@ -83,7 +91,8 @@ const StudentDashboard = () => {
         .catch((error) => {
             console.error('Error posting student project:', error);
             if (error.response && error.response.status === 403) {
-                alert('Your session has expired. Please log in again.');
+                alert('Your session has expired or you do not have permission. Please log in again.');
+                localStorage.removeItem('token'); // Clear the token
                 navigate('/login'); // Redirect to login page if session is expired
             }
         });
