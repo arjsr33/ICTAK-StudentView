@@ -23,8 +23,14 @@ const ProjectDashboard1 = () => {
   });
 
   useEffect(() => {
-    axios.get(`https://arjun-ictak.vercel.app/api/princy/studentswithprojects/${s_id}`)
-      .then((res) => {
+    const fetchStudentData = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/studentswithprojects/${s_id}`, {
+          headers: {
+            Authorization: token // Include the token in the headers
+          }
+        });
         console.log(`Axios res.data(studentswithprojects) in ProjectDashboard1 is - `);
         console.log(res.data[0]);
         setStudent({
@@ -34,8 +40,12 @@ const ProjectDashboard1 = () => {
           p_name: res.data[0].p_name,
           start_date: res.data[0].start_date
         });
-      })
-      .catch(error => console.error('Error fetching student data:', error));
+      } catch (error) {
+        console.error('Error fetching student data:', error);
+      }
+    };
+
+    fetchStudentData();
   }, [s_id]);
 
   useEffect(() => {

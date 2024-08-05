@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Discussion = require('../model/discussion'); // Ensure the correct path to the model
 const studentCourseData = require('../model/studentCourseData'); // Ensure the correct path to the model
+const authenticateToken = require('../middleware/authenticateToken'); // Path to your middleware
 
 // Get student's course and corresponding discussion forum data
-router.get('/discussion/:s_id', async (req, res) => {
+router.get('/discussion/:s_id', authenticateToken, async (req, res) => {
   try {
     const { s_id } = req.params;
     console.log(`Fetching course for student ID: ${s_id}`);
@@ -35,7 +36,7 @@ router.get('/discussion/:s_id', async (req, res) => {
 });
 
 // Add a new question
-router.post('/discussion/:s_id/question', async (req, res) => {
+router.post('/discussion/:s_id/question', authenticateToken, async (req, res) => {
   try {
     const { s_id } = req.params;
     const { question } = req.body;
@@ -72,7 +73,7 @@ router.post('/discussion/:s_id/question', async (req, res) => {
 });
 
 // Add an answer to a specific question
-router.post('/discussion/:s_id/question/:questionId/answer', async (req, res) => {
+router.post('/discussion/:s_id/question/:questionId/answer', authenticateToken, async (req, res) => {
   try {
     const { s_id, questionId } = req.params;
     const { answer } = req.body;
@@ -116,7 +117,7 @@ router.post('/discussion/:s_id/question/:questionId/answer', async (req, res) =>
 });
 
 // Edit a question
-router.put('/discussion/:s_id/question/:questionId', async (req, res) => {
+router.put('/discussion/:s_id/question/:questionId', authenticateToken, async (req, res) => {
   try {
     const { s_id, questionId } = req.params;
     const { questionText } = req.body;
@@ -160,7 +161,7 @@ router.put('/discussion/:s_id/question/:questionId', async (req, res) => {
 });
 
 // Delete a question
-router.delete('/discussion/:s_id/question/:questionId', async (req, res) => {
+router.delete('/discussion/:s_id/question/:questionId', authenticateToken, async (req, res) => {
   try {
     const { s_id, questionId } = req.params;
 

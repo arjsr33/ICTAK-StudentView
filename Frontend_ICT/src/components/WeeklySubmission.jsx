@@ -4,12 +4,11 @@ import axios from 'axios';
 
 const WeeklySubmission = ({ s_id }) => {
   const [s_start_date, set_s_start_date] = useState(null);
-
   const [week1ConditionMet, set_week1ConditionMet] = useState(false);
   const [week2ConditionMet, set_week2ConditionMet] = useState(false);
   const [week3ConditionMet, set_week3ConditionMet] = useState(false);
   const [week4ConditionMet, set_week4ConditionMet] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
     selectedWeek: '',
     links: '',
@@ -17,20 +16,27 @@ const WeeklySubmission = ({ s_id }) => {
     comments: '',
   });
 
+  // Fetch JWT token from local storage or context
+  const token = localStorage.getItem('token');
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/studentswithprojects/${s_id}`);
+        const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/studentswithprojects/${s_id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         console.log(`Axios res.data[0].start_date (studentswithprojects) in WeeklySubmission is - `);
         console.log(res.data[0].start_date);
         set_s_start_date(res.data[0].start_date);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching student project data:', error);
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, [s_id]);
+  }, [s_id, token]);
 
   useEffect(() => {
     if (s_start_date) {
@@ -67,15 +73,29 @@ const WeeklySubmission = ({ s_id }) => {
 
     try {
       const result = await axios.post(`https://arjun-ictak.vercel.app/api/princy/uploadWeek/${s_id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
       });
       console.log(`Axios res.data(projects) is - `);
       console.log(result.data);
       alert('Congrats!!! You have submitted your work for the week');
+      setForm({
+        selectedWeek: '',
+        links: '',
+        files: '',
+        comments: '',
+      });
     } catch (error) {
       console.error('Error submitting form:', error);
+      alert('Failed to submit. Please try again.');
     }
   };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div>

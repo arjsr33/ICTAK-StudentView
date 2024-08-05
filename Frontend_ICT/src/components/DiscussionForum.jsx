@@ -14,16 +14,24 @@ const DiscussionForum = ({ s_id }) => {
 
   const fetchDiscussion = async () => {
     try {
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
       console.log(`Fetching discussion for student ID: ${s_id}`);
-      const response = await axios.get(`https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}`);
-      const discussion = response.data.questions.map(question => ({
+      const response = await axios.get(
+        `https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}`,
+        {
+          headers: {
+            Authorization: token, // Include the token in the headers
+          },
+        }
+      );
+      const discussion = response.data.questions.map((question) => ({
         id: question._id,
         text: question.question,
         comments: question.answers,
         views: Math.floor(Math.random() * 1000), // Randomizing views for demonstration
         date: 'Just now', // Placeholder, replace with actual data if available
         isFavorite: false,
-        user: { name: 'User', online: true } // Placeholder, replace with actual data if available
+        user: { name: 'User', online: true }, // Placeholder, replace with actual data if available
       }));
       setQueries(discussion);
     } catch (error) {
@@ -34,16 +42,28 @@ const DiscussionForum = ({ s_id }) => {
   const handlePostQuery = async () => {
     if (newQuery.trim()) {
       try {
-        const response = await axios.post(`https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}/question`, { question: newQuery });
-        setQueries([...queries, {
-          id: response.data.questions[response.data.questions.length - 1]._id,
-          text: newQuery,
-          comments: [],
-          views: Math.floor(Math.random() * 1000),
-          date: 'Just now',
-          isFavorite: false,
-          user: { name: 'User', online: true }
-        }]);
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const response = await axios.post(
+          `https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}/question`,
+          { question: newQuery },
+          {
+            headers: {
+              Authorization: token, // Include the token in the headers
+            },
+          }
+        );
+        setQueries([
+          ...queries,
+          {
+            id: response.data.questions[response.data.questions.length - 1]._id,
+            text: newQuery,
+            comments: [],
+            views: Math.floor(Math.random() * 1000),
+            date: 'Just now',
+            isFavorite: false,
+            user: { name: 'User', online: true },
+          },
+        ]);
         setNewQuery('');
       } catch (error) {
         console.error('Error posting query:', error);
@@ -54,10 +74,21 @@ const DiscussionForum = ({ s_id }) => {
   const handleAddComment = async (queryId, comment) => {
     if (comment.trim()) {
       try {
-        await axios.post(`https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}/question/${queryId}/answer`, { answer: comment });
-        setQueries(queries.map(q => 
-          q.id === queryId ? { ...q, comments: [...q.comments, comment] } : q
-        ));
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        await axios.post(
+          `https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}/question/${queryId}/answer`,
+          { answer: comment },
+          {
+            headers: {
+              Authorization: token, // Include the token in the headers
+            },
+          }
+        );
+        setQueries(
+          queries.map((q) =>
+            q.id === queryId ? { ...q, comments: [...q.comments, comment] } : q
+          )
+        );
         setNewComment('');
       } catch (error) {
         console.error('Error adding comment:', error);
@@ -68,8 +99,21 @@ const DiscussionForum = ({ s_id }) => {
   const handleEditQuery = async () => {
     if (newQuery.trim() && editingQueryId) {
       try {
-        const response = await axios.put(`https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}/question/${editingQueryId}`, { questionText: newQuery });
-        setQueries(queries.map(q => q.id === editingQueryId ? { ...q, text: newQuery } : q));
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const response = await axios.put(
+          `https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}/question/${editingQueryId}`,
+          { questionText: newQuery },
+          {
+            headers: {
+              Authorization: token, // Include the token in the headers
+            },
+          }
+        );
+        setQueries(
+          queries.map((q) =>
+            q.id === editingQueryId ? { ...q, text: newQuery } : q
+          )
+        );
         setNewQuery('');
         setEditingQueryId(null);
       } catch (error) {
@@ -80,22 +124,30 @@ const DiscussionForum = ({ s_id }) => {
 
   const handleDeleteQuery = async (queryId) => {
     try {
-      await axios.delete(`https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}/question/${queryId}`);
-      setQueries(queries.filter(q => q.id !== queryId));
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
+      await axios.delete(
+        `https://arjun-ictak.vercel.app/api/discussion/discussion/${s_id}/question/${queryId}`,
+        {
+          headers: {
+            Authorization: token, // Include the token in the headers
+          },
+        }
+      );
+      setQueries(queries.filter((q) => q.id !== queryId));
     } catch (error) {
       console.error('Error deleting query:', error);
     }
   };
 
   const toggleFavorite = (id) => {
-    setQueries(queries.map(q => q.id === id ? { ...q, isFavorite: !q.isFavorite } : q));
+    setQueries(queries.map((q) => (q.id === id ? { ...q, isFavorite: !q.isFavorite } : q)));
   };
 
   return (
     <div style={styles.forum}>
       <h2>Discussion Forum</h2>
       <div style={styles.querySection}>
-        <textarea 
+        <textarea
           style={styles.textarea}
           value={newQuery}
           onChange={(e) => setNewQuery(e.target.value)}
@@ -108,16 +160,21 @@ const DiscussionForum = ({ s_id }) => {
         )}
       </div>
       <div style={styles.queryList}>
-        {queries.map(query => (
-          <div 
-            key={query.id} 
+        {queries.map((query) => (
+          <div
+            key={query.id}
             style={styles.query}
             onMouseEnter={() => setHoveredQuery(query.id)}
             onMouseLeave={() => setHoveredQuery(null)}
           >
             <div style={styles.queryHeader}>
               <div style={styles.userProfile}>
-                <div style={{ ...styles.onlineStatus, backgroundColor: query.user.online ? '#4caf50' : '#f44336' }}></div>
+                <div
+                  style={{
+                    ...styles.onlineStatus,
+                    backgroundColor: query.user.online ? '#4caf50' : '#f44336',
+                  }}
+                ></div>
                 <span>{query.user.name}</span>
               </div>
               <span>{query.date}</span>
@@ -146,8 +203,8 @@ const DiscussionForum = ({ s_id }) => {
                   <p>{comment}</p>
                 </div>
               ))}
-              <input 
-                type="text" 
+              <input
+                type="text"
                 style={styles.commentInput}
                 placeholder="Add a comment..."
                 value={newComment}

@@ -1,39 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box, Grid } from '@mui/material';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import './ProjectOverview.css'; 
 
-function ProjectOverview({p_id}) {
+function ProjectOverview({ p_id }) {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
-  // const { id } = useParams();
 
   useEffect(() => {
-    axios.get(`https://arjun-ictak.vercel.app/api/arjun/projects/${p_id}`)
-      .then(response => {
+    const fetchProjects = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const response = await axios.get(`https://arjun-ictak.vercel.app/api/arjun/projects/${p_id}`, {
+          headers: {
+            Authorization: token // Include the token in the headers
+          }
+        });
         console.log('Projects fetched:', response.data);
         if (Array.isArray(response.data)) {
           setProjects(response.data);
           if (response.data.length > 0) {
             setSelectedProject(response.data[0]);
-            updateBackgroundImage(response.data[0].backgroundImage);
+            // updateBackgroundImage(response.data[0].backgroundImage); // Uncomment if you want to update background image
           }
         } else {
           console.error('API response is not an array:', response.data);
         }
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching projects:', error);
-      });
+      }
+    };
+
+    fetchProjects();
   }, [p_id]);
 
-  useEffect(() => {
-    if (selectedProject) {
-      // updateBackgroundImage(selectedProject.backgroundImage);
-    }
-  }, [selectedProject]);
-
+  // Uncomment if you want to update background image
   // const updateBackgroundImage = (image) => {
   //   document.body.style.backgroundImage = `url(/images/${image})`;
   //   document.body.style.backgroundSize = 'cover';

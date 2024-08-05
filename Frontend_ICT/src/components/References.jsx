@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './References.css';
 
-const References = ({p_id}) => {
-  const [projectId, setProjectId] = useState('');
+const References = ({ p_id }) => {
   const [project, setProject] = useState(null);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    fetchProject();
+  }, [p_id]);
+
   const fetchProject = async () => {
     try {
-      console.log(`${p_id}`)
-      const response = await axios.get(`https://arjun-ictak.vercel.app/api/fathima/projects/${p_id}`);
+      console.log(`Fetching project with ID: ${p_id}`);
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
+      const response = await axios.get(`https://arjun-ictak.vercel.app/api/fathima/projects/${p_id}`, {
+        headers: {
+          Authorization: token // Include the token in the headers
+        }
+      });
       setProject(response.data);
       setError('');
     } catch (err) {
@@ -21,13 +29,6 @@ const References = ({p_id}) => {
 
   return (
     <div className="project-container">
-      <input
-        type="text"
-        value={p_id}
-        onChange={(e) => setProjectId(e.target.value)}
-        placeholder="Enter Project ID"
-      />
-      <button onClick={fetchProject}>Get Reference</button>
       {error && <p className="error">{error}</p>}
       {project && (
         <div className="project-details">

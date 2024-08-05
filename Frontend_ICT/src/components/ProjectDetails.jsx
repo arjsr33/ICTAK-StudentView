@@ -20,18 +20,26 @@ function ProjectDetails() {
   console.log('Student data passed as state:', studentData);
 
   useEffect(() => {
-    axios.get(`https://arjun-ictak.vercel.app/api/arjun/projects/${id}`)
-      .then(response => {
+    const fetchProjects = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const response = await axios.get(`https://arjun-ictak.vercel.app/api/arjun/projects/${id}`, {
+          headers: {
+            Authorization: token // Include the token in the headers
+          }
+        });
         console.log('Projects fetched:', response.data); 
         setProjects(response.data);
         if (response.data.length > 0) {
           setSelectedProject(response.data[0]);
           setSelectedProjectId(response.data[0].id); // Use the project ID instead of _id
         }
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching projects:', error);
-      });
+      }
+    };
+
+    fetchProjects();
   }, [id]);
 
   const handleAcceptanceChange = (event) => {
@@ -40,17 +48,14 @@ function ProjectDetails() {
 
   const handleSelectAndProceed = () => {
     if (isAccepted) {
-      // const confirmed = window.confirm('Are you sure you want to select this project? Once selected, you cannot change it.');
-      // if (confirmed) {
-        console.log('Proceeding with project:', selectedProject.name);
-        saveProjectSelection();
-      }
-     else {
+      console.log('Proceeding with project:', selectedProject.name);
+      saveProjectSelection();
+    } else {
       alert('Please accept the terms to proceed.');
     }
   };
 
-  const saveProjectSelection = () => {
+  const saveProjectSelection = async () => {
     const projectSelection = {
       sp_id: studentData.s_id,
       sp_name: studentData.s_name,
@@ -59,22 +64,26 @@ function ProjectDetails() {
       start_date: new Date().toISOString() // Format date to ISO 8601
     };
 
-    axios.post('https://arjun-ictak.vercel.app/api/princy/selectProject', projectSelection)
-      .then(response => {
-        console.log('Project selection saved:', response.data);
-        goToProjectDashboard();
-      })
-      .catch(error => {
-        console.error('Error saving project selection:', error);
-        if (error.response) {
-          if (error.response.status === 400) {
-            alert(error.response.data.message);
-          } else if (error.response.status === 200) {
-            console.log('Student already has a project');
-            goToProjectDashboard();
-          }
+    try {
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
+      const response = await axios.post('https://arjun-ictak.vercel.app/api/princy/selectProject', projectSelection, {
+        headers: {
+          Authorization: token // Include the token in the headers
         }
       });
+      console.log('Project selection saved:', response.data);
+      goToProjectDashboard();
+    } catch (error) {
+      console.error('Error saving project selection:', error);
+      if (error.response) {
+        if (error.response.status === 400) {
+          alert(error.response.data.message);
+        } else if (error.response.status === 200) {
+          console.log('Student already has a project');
+          goToProjectDashboard();
+        }
+      }
+    }
   };
 
   const goToProjectDashboard = () => {

@@ -1,4 +1,6 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const authenticateToken = require('../middleware/authenticateToken');
 const router = express.Router();
 
 router.use(express.json());
@@ -7,6 +9,9 @@ router.use(express.urlencoded({ extended: true }));
 const Signup = require('../model/Signup');
 const studentCourseData = require('../model/studentCourseData');
 const studentsWithProjectData = require('../model/studentsWithProjectData');
+
+// JWT secret key
+const JWT_SECRET = 'your_jwt_secret_key';
 
 // Helper function to generate a random exit score
 const generateRandomExitScore = () => Math.floor(Math.random() * 100);
@@ -20,7 +25,7 @@ const calculateGrade = (score) => {
     return 'E';
 };
 
-router.get('/studentCourse/:student', async (req, res) => {
+router.get('/studentCourse/:student', authenticateToken, async (req, res) => {
     try {
         const student = req.params.student;
         console.log('The student id is - ');
@@ -38,7 +43,7 @@ router.get('/studentCourse/:student', async (req, res) => {
     }
 });
 
-router.get('/studentswithprojects/:student', async (req, res) => {
+router.get('/studentswithprojects/:student', authenticateToken, async (req, res) => {
     try {
         const { student } = req.params;
         console.log(`Student is ${student}`);
@@ -69,7 +74,10 @@ router.post('/signup', async (req, res) => {
             s_exitscore: exitScore
         });
 
-        res.status(201).send({ message: 'Student Added!!!', newStudent, newStudentCourseData });
+        // Generate JWT token
+        const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(201).send({ message: 'Student Added!!!', newStudent, newStudentCourseData, token });
     } catch (e) {
         console.log(e);
         res.status(500).send({ message: 'Server error', error: e.message });
@@ -86,7 +94,10 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        res.status(200).json({ message: "Login successful", user });
+        // Generate JWT token
+        const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(200).json({ message: "Login successful", user, token });
     } catch (err) {
         console.error('Error during login:', err);
         res.status(500).json({ message: "Server error" });
