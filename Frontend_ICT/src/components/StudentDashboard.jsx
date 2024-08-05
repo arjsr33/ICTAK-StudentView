@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const StudentDashboard = () => {
-    const navigate = useNavigate(); // Initialize navigate
+    const navigate = useNavigate();
     const location = useLocation();
     const { s_id } = location.state || {};
     const [studentData, setStudentData] = useState({
@@ -28,18 +28,19 @@ const StudentDashboard = () => {
                         Authorization: `Bearer ${token}` // Include the token in the headers
                     }
                 });
-                console.log(`Axios res.data(student) is - `);
-                console.log(res.data);
+                console.log('Axios res.data(student) is - ', res.data);
                 setStudentData(res.data);
-                console.log('Student data is - ');
-                console.log(studentData);
             } catch (error) {
                 console.error('Error fetching student data:', error);
+                if (error.response && error.response.status === 403) {
+                    alert('Your session has expired. Please log in again.');
+                    navigate('/login'); // Redirect to login page if session is expired
+                }
             }
         };
 
         fetchStudentData();
-    }, [s_id, token]);
+    }, [s_id, token, navigate]);
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -49,18 +50,21 @@ const StudentDashboard = () => {
                         Authorization: `Bearer ${token}` // Include the token in the headers
                     }
                 });
-                console.log(`Axios res.data(projects) is - `);
-                console.log(res.data);
+                console.log('Axios res.data(projects) is - ', res.data);
                 setProjects(res.data);
             } catch (error) {
                 console.error('Error fetching projects:', error);
+                if (error.response && error.response.status === 403) {
+                    alert('Your session has expired. Please log in again.');
+                    navigate('/login'); // Redirect to login page if session is expired
+                }
             }
         };
 
         if (studentData.s_course) {
             fetchProjects();
         }
-    }, [studentData.s_course, token]);
+    }, [studentData.s_course, token, navigate]);
 
     function postStdPjt() {
         axios.post(`https://arjun-ictak.vercel.app/api/princy/postStdPjt`, {
@@ -74,16 +78,19 @@ const StudentDashboard = () => {
             }
         })
         .then((res) => {
-            console.log(`Axios postStdPjt is - `);
-            console.log(res.data);
+            console.log('Axios postStdPjt is - ', res.data);
         })
         .catch((error) => {
             console.error('Error posting student project:', error);
+            if (error.response && error.response.status === 403) {
+                alert('Your session has expired. Please log in again.');
+                navigate('/login'); // Redirect to login page if session is expired
+            }
         });
     }
 
     function goToProjectDashboard() {
-        navigate('/ProjectDashboard1', { state: { s_id: s_id } }); // Redirect to Project Dashboard route
+        navigate('/ProjectDashboard1', { state: { s_id: s_id } });
     }
 
     function goToProjectDetails(item) {
@@ -93,17 +100,17 @@ const StudentDashboard = () => {
     return (
         <div>
             <Navbar />
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br/>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
 
             <h2 className="text-primary py-2 text-center"><u>The Student Dashboard</u></h2>
             <div className="row">
-                <br/><br/><br/>
+                <br /><br /><br />
                 <div className="col-3">
-                    <br/><br/><br/>
+                    <br /><br /><br />
                     <ol className="list-group list-group-flush" id="studentList">
                         <li className="list-group-item d-flex justify-content-between align-items-start">
                             <div className="ms-2 me-auto">
@@ -134,8 +141,8 @@ const StudentDashboard = () => {
                 </div>
                 
                 <div className="col-8">
-                    <h3><u>Available Projects</u></h3><br/>
-                    <div className="row ">
+                    <h3><u>Available Projects</u></h3><br />
+                    <div className="row">
                         {projects.map((item, i) => (
                             <div className="col" key={i}>
                                 <div className="card h-100">
