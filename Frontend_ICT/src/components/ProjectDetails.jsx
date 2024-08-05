@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Typography, FormControlLabel, Checkbox, Grid, Card, CardContent, Button } from '@mui/material';
 import axios from 'axios';
 import Navbar from './Navbar';
-import './ProjectDetails.css'; 
+import './ProjectDetails.css';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 function ProjectDetails() {
@@ -25,7 +25,7 @@ function ProjectDetails() {
         const token = localStorage.getItem('token'); // Retrieve the token from local storage
         const response = await axios.get(`https://arjun-ictak.vercel.app/api/arjun/projects/${id}`, {
           headers: {
-            Authorization: token // Include the token in the headers
+            Authorization: `Bearer ${token}` // Include the token in the headers
           }
         });
         console.log('Projects fetched:', response.data); 
@@ -36,11 +36,16 @@ function ProjectDetails() {
         }
       } catch (error) {
         console.error('Error fetching projects:', error);
+        if (error.response && error.response.status === 401) {
+          alert('Your session has expired. Please log in again.');
+          localStorage.removeItem('token'); // Clear the token from local storage
+          navigate('/login'); // Redirect to login page
+        }
       }
     };
 
     fetchProjects();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleAcceptanceChange = (event) => {
     setIsAccepted(event.target.checked);
@@ -68,7 +73,7 @@ function ProjectDetails() {
       const token = localStorage.getItem('token'); // Retrieve the token from local storage
       const response = await axios.post('https://arjun-ictak.vercel.app/api/princy/selectProject', projectSelection, {
         headers: {
-          Authorization: token // Include the token in the headers
+          Authorization: `Bearer ${token}` // Include the token in the headers
         }
       });
       console.log('Project selection saved:', response.data);
