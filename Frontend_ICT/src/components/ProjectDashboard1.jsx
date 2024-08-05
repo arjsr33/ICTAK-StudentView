@@ -3,7 +3,7 @@ import Navbar from './Navbar';
 import WeeklySubmission from './WeeklySubmission';
 import axios from 'axios';
 import FinalProjectSubmission from './FinalProjectSubmission';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import VivaVoce from './VivaVoce';
 import DiscussionForum from './DiscussionForum';
 import References from './References';
@@ -11,8 +11,9 @@ import Grades from './Grades';
 import ProjectOverview from './ProjectOverview';
 
 const ProjectDashboard1 = () => {
-  const [isConditionMet, setIsConditionMet] = useState(false); // Initialize as false
+  const [isConditionMet, setIsConditionMet] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { s_id } = location.state || {};
   const [student, setStudent] = useState({
     sp_id: '',
@@ -26,13 +27,15 @@ const ProjectDashboard1 = () => {
     const fetchStudentData = async () => {
       try {
         const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        if (!token) {
+          throw new Error('No token found');
+        }
         const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/studentswithprojects/${s_id}`, {
           headers: {
-            Authorization: token // Include the token in the headers
+            Authorization: `Bearer ${token}` // Include the token in the headers
           }
         });
-        console.log(`Axios res.data(studentswithprojects) in ProjectDashboard1 is - `);
-        console.log(res.data[0]);
+        console.log('Student data fetched:', res.data[0]);
         setStudent({
           sp_id: res.data[0].sp_id,
           sp_name: res.data[0].sp_name,
@@ -42,11 +45,16 @@ const ProjectDashboard1 = () => {
         });
       } catch (error) {
         console.error('Error fetching student data:', error);
+        if (error.response && error.response.status === 401) {
+          alert('Session expired. Please log in again.');
+          localStorage.removeItem('token'); // Remove invalid token
+          navigate('/login'); // Redirect to login page
+        }
       }
     };
 
     fetchStudentData();
-  }, [s_id]);
+  }, [s_id, navigate]);
 
   useEffect(() => {
     if (student.start_date) {
@@ -112,7 +120,6 @@ const ProjectDashboard1 = () => {
               )}
               -----------------
               <br /><br />
-              {/* <Link to='/'><button><b><u>Logout</u></b></button></Link> */}
             </div>
           </div>
           <div className="col-0.25">
