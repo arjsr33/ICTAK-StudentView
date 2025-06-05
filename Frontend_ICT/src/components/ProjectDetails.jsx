@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, FormControlLabel, Checkbox, Grid, Card, CardContent, Button } from '@mui/material';
 import axios from 'axios';
-import Navbar from './Navbar';
 import './ProjectDetails.css';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
@@ -97,9 +96,7 @@ function ProjectDetails() {
 
   return (
     <>
-      <Navbar />
-      <br/>
-      <Container
+     <Container
         maxWidth={false}
         className="dashboard-container"
         style={{ backgroundImage: `url(${selectedProject ? `/images/${selectedProject.backgroundImage}` : ''})` }}

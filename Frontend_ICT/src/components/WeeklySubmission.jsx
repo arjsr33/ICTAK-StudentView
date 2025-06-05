@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from './Navbar';
 import axios from 'axios';
 
 const WeeklySubmission = ({ s_id }) => {
@@ -99,7 +98,6 @@ const WeeklySubmission = ({ s_id }) => {
 
   return (
     <div>
-      <Navbar />
       <form className="formStyle" encType="multipart/form-data" onSubmit={submitForm}>
         <h2 className="text-primary py-2 text-center">
           <u>Weekly Submission</u>

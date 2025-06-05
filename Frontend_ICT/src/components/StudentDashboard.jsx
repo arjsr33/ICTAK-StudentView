@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from './Navbar';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -108,12 +107,6 @@ const StudentDashboard = () => {
 
     return (
         <div>
-            <Navbar />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
 
             <h2 className="text-primary py-2 text-center"><u>The Student Dashboard</u></h2>
             <div className="row">

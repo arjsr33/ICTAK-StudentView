@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import './Ref.css'; 
-import Navbar from '../Nav/Navbar';
-import Home from '../Hm/Home';
 
 const WeeklyReference = () => {
   const topicsAndMaterials = [
@@ -66,8 +64,6 @@ const WeeklyReference = () => {
 
   return (
     <>
-    <Navbar/>
-    <Home/>
     <div className="weekly-reference">
       <h2>Weekly Reference</h2>
 

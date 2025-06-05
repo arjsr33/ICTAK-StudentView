@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from './Navbar';
 import WeeklySubmission from './WeeklySubmission';
 import axios from 'axios';
 import FinalProjectSubmission from './FinalProjectSubmission';
@@ -73,12 +72,6 @@ const ProjectDashboard1 = () => {
 
   return (
     <div>
-      <Navbar />
-      <br />
-      <br/>
-      <br/>
-      <br/>
-      <br/>
 
       <h2 className="text-primary py-2 text-center"><b><u>PROJECT DASHBOARD</u></b></h2>
       <h4 className="py-2 text-center">
