@@ -111,17 +111,17 @@ const Navbar = () => {
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           z-index: 1000;
           transition: all 0.3s ease;
-          padding: 0.5rem 0;
+          padding: 0.75rem 0;
         }
 
         .navbar.scrolled {
           background: rgba(255, 255, 255, 0.98);
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-          padding: 0.25rem 0;
+          padding: 0.5rem 0;
         }
 
         .nav-container {
-          max-width: 1200px;
+          max-width: 1400px; /* Increased max-width for wider layout */
           margin: 0 auto;
           display: flex;
           align-items: center;
@@ -137,6 +137,7 @@ const Navbar = () => {
           text-decoration: none;
           color: #1e293b;
           transition: transform 0.3s ease;
+          flex-shrink: 0; /* Prevent logo from shrinking */
         }
 
         .nav-logo:hover {
@@ -179,7 +180,9 @@ const Navbar = () => {
         .nav-menu {
           display: flex;
           align-items: center;
-          gap: 2rem;
+          gap: 2.5rem; /* Increased gap for better spacing */
+          flex: 1; /* Allow menu to take available space */
+          justify-content: center; /* Center the navigation items */
         }
 
         .nav-link {
@@ -190,6 +193,7 @@ const Navbar = () => {
           position: relative;
           transition: all 0.3s ease;
           padding: 0.5rem 0;
+          white-space: nowrap; /* Prevent text wrapping */
         }
 
         .nav-link:hover {
@@ -220,7 +224,7 @@ const Navbar = () => {
           display: flex;
           align-items: center;
           gap: 1rem;
-          margin-left: 1rem;
+          flex-shrink: 0; /* Prevent buttons from shrinking */
         }
 
         .nav-btn {
@@ -231,6 +235,7 @@ const Navbar = () => {
           font-size: 0.9rem;
           transition: all 0.3s ease;
           border: 2px solid transparent;
+          white-space: nowrap; /* Prevent text wrapping */
         }
 
         .login-btn {
@@ -286,11 +291,32 @@ const Navbar = () => {
           background: #ff6b35;
         }
 
-        @media screen and (max-width: 768px) {
+        @media screen and (max-width: 1200px) {
+          .nav-container {
+            max-width: 1200px;
+            padding: 0 1.5rem;
+          }
+          
+          .nav-menu {
+            gap: 2rem;
+          }
+        }
+
+        @media screen and (max-width: 1024px) {
           .nav-container {
             padding: 0 1rem;
           }
+          
+          .nav-menu {
+            gap: 1.5rem;
+          }
+          
+          .nav-link {
+            font-size: 0.9rem;
+          }
+        }
 
+        @media screen and (max-width: 768px) {
           .logo-text {
             display: none;
           }
@@ -312,6 +338,7 @@ const Navbar = () => {
             box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
             padding: 2rem 0;
             gap: 1.5rem;
+            justify-content: flex-start;
           }
 
           .nav-menu.active {
@@ -325,7 +352,6 @@ const Navbar = () => {
 
           .nav-buttons {
             flex-direction: column;
-            margin-left: 0;
             margin-top: 1rem;
             gap: 1rem;
           }
@@ -339,6 +365,7 @@ const Navbar = () => {
         @media screen and (max-width: 480px) {
           .nav-container {
             height: 60px;
+            padding: 0 1rem;
           }
 
           .logo-img {
@@ -379,20 +406,6 @@ const Navbar = () => {
         .nav-menu.active .nav-link:nth-child(4) { animation-delay: 0.25s; }
         .nav-menu.active .nav-link:nth-child(5) { animation-delay: 0.3s; }
         .nav-menu.active .nav-buttons { animation-delay: 0.35s; }
-
-        /* Glass morphism effect for mobile menu */
-        @media screen and (max-width: 768px) {
-          .nav-menu {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-          }
-        }
-
-        /* Smooth scroll behavior when menu is open */
-        body.menu-open {
-          overflow: hidden;
-        }
       `}</style>
     </>
   );
