@@ -58,14 +58,7 @@
 /* ICTAK specific component styles that need to override global styles */
 
 /* Navbar specific adjustments */
-.App .navbar {
-  /* Any navbar-specific overrides go here */
-}
 
-/* Hero section specific adjustments */
-.App .hero-section {
-  /* Any hero-specific overrides go here */
-}
 
 /* Section spacing adjustments for the main app */
 .App section + section {
