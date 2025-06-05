@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from './Navbar/Navbar';
+import Navbar from './Navbar';
 
 const Login2 = () => {
   const [email, setEmail] = useState('');
