@@ -317,25 +317,22 @@ const Home = () => {
           box-sizing: border-box;
         }
 
-        /* Global body styles to fix background issues */
-        body {
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-          min-height: 100vh;
-        }
-
         .hero-section {
           min-height: 100vh;
-          background: linear-gradient(135deg, rgba(30, 41, 82, 0.9), rgba(51, 65, 85, 0.8)), 
-                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ff6b35" stop-opacity="0.1"/><stop offset="100%" stop-color="%23334155" stop-opacity="0.3"/></radialGradient></defs><rect width="100%" height="100%" fill="url(%23a)"/><g fill="%23ffffff" fill-opacity="0.02"><circle cx="200" cy="200" r="2"/><circle cx="400" cy="100" r="1"/><circle cx="600" cy="300" r="1.5"/><circle cx="800" cy="150" r="1"/><circle cx="300" cy="500" r="2"/><circle cx="700" cy="600" r="1.5"/><circle cx="100" cy="700" r="1"/><circle cx="900" cy="800" r="2"/></g></svg>');
+          background-image: 
+            linear-gradient(135deg, rgba(30, 41, 82, 0.8), rgba(51, 65, 85, 0.7)), 
+            url('/assets/hero-bg.jpg');
           background-size: cover;
           background-position: center;
           background-repeat: no-repeat;
+          background-attachment: fixed;
           display: flex;
           align-items: center;
           position: relative;
           overflow: hidden;
         }
 
+        /* Fallback in case the image doesn't load */
         .hero-section::before {
           content: '';
           position: absolute;
@@ -343,21 +340,24 @@ const Home = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: linear-gradient(45deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.05));
+          background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.05));
           pointer-events: none;
+          z-index: 1;
         }
 
         .hero-overlay {
           width: 100%;
-          padding: 0; /* Remove padding since hero-content has it */
+          padding: 0;
+          position: relative;
+          z-index: 2;
         }
 
         .hero-content {
-          width: 100%; /* Full width of the page */
+          width: 100%;
           margin: 0;
           color: white;
           text-align: center;
-          padding: 0 3rem; /* Add padding for content spacing */
+          padding: 0 3rem;
         }
 
         .hero-title {
@@ -453,9 +453,9 @@ const Home = () => {
         }
 
         .container {
-          width: 100%; /* Full width of the page */
+          width: 100%;
           margin: 0;
-          padding: 0 3rem; /* Increased padding for better content spacing */
+          padding: 0 3rem;
         }
 
         .features-section, .programs-section, .testimonials-section {
@@ -768,7 +768,12 @@ const Home = () => {
           color: #ff6b35;
         }
 
+        /* Mobile Responsive Design */
         @media (max-width: 768px) {
+          .hero-section {
+            background-attachment: scroll; /* Fix for mobile devices */
+          }
+
           .hero-stats {
             gap: 2rem;
           }
@@ -808,7 +813,6 @@ const Home = () => {
             justify-content: center;
           }
 
-          /* Responsive container padding */
           .container {
             padding: 0 2rem;
           }
@@ -841,7 +845,6 @@ const Home = () => {
             gap: 0.5rem;
           }
 
-          /* Mobile container padding */
           .container {
             padding: 0 1rem;
           }
