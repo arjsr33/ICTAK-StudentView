@@ -1050,7 +1050,7 @@ section:not(.hero-section) {
 .placement-stat:hover {
   transform: translateY(-8px) scale(1.05);
   border-color: var(--color-orange);
-  color: var(--color-text-white);
+  color: var(--color-primary-dark);
 }
 
 .placement-stat:hover::before {
@@ -1065,7 +1065,7 @@ section:not(.hero-section) {
 }
 
 .placement-stat:hover h3 {
-  color: var(--color-text-white);
+  color: var(--color-primary-dark);
 }
 
 .placement-number {
@@ -1080,8 +1080,8 @@ section:not(.hero-section) {
 }
 
 .placement-stat:hover .placement-number {
-  color: var(--color-text-white);
-  -webkit-text-fill-color: var(--color-text-white);
+  color: var(--color-primary-dark);
+  -webkit-text-fill-color: var(--color-primary-light);
 }
 
 .package-badge {
@@ -1097,7 +1097,7 @@ section:not(.hero-section) {
 
 .placement-stat:hover .package-badge {
   background: rgba(255, 255, 255, 0.2);
-  color: var(--color-text-white);
+  color: var(--color-primary-dark);
 }
 
 /* ========================================= */
