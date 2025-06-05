@@ -121,12 +121,12 @@ const Navbar = () => {
         }
 
         .nav-container {
-          max-width: 1400px; /* Increased max-width for wider layout */
-          margin: 0 auto;
+          width: 100%; /* Full width of the page */
+          margin: 0;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0 2rem;
+          padding: 0 3rem; /* Increased padding for better spacing */
           height: 70px;
         }
 
@@ -293,8 +293,7 @@ const Navbar = () => {
 
         @media screen and (max-width: 1200px) {
           .nav-container {
-            max-width: 1200px;
-            padding: 0 1.5rem;
+            padding: 0 2rem;
           }
           
           .nav-menu {
@@ -304,7 +303,7 @@ const Navbar = () => {
 
         @media screen and (max-width: 1024px) {
           .nav-container {
-            padding: 0 1rem;
+            padding: 0 1.5rem;
           }
           
           .nav-menu {
