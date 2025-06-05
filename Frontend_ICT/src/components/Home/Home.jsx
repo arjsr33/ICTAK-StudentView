@@ -379,6 +379,17 @@ const Home = () => {
           max-width: 700px;
           margin: 0 auto 3rem;
           opacity: 0.95;
+          color: #F8F9FA;
+          text-shadow: 
+            0 0 10px rgba(255, 255, 255, 0.8),
+            0 0 20px rgba(255, 255, 255, 0.6),
+            0 0 30px rgba(255, 255, 255, 0.4),
+            0 2px 4px rgba(0, 0, 0, 0.3);
+          background: linear-gradient(135deg, #FFFFFF, #E8EAED, #FFFFFF);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
         }
 
         .hero-stats {
