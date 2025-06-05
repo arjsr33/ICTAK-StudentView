@@ -317,13 +317,19 @@ const Home = () => {
           box-sizing: border-box;
         }
 
+        /* Global body styles to fix background issues */
+        body {
+          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+          min-height: 100vh;
+        }
+
         .hero-section {
           min-height: 100vh;
-          background: linear-gradient(135deg, rgba(8, 0, 58, 0.85), rgba(30, 41, 82, 0.85)), 
-                      url('/assets/images/hero-bg.jpg');
+          background: linear-gradient(135deg, rgba(30, 41, 82, 0.9), rgba(51, 65, 85, 0.8)), 
+                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ff6b35" stop-opacity="0.1"/><stop offset="100%" stop-color="%23334155" stop-opacity="0.3"/></radialGradient></defs><rect width="100%" height="100%" fill="url(%23a)"/><g fill="%23ffffff" fill-opacity="0.02"><circle cx="200" cy="200" r="2"/><circle cx="400" cy="100" r="1"/><circle cx="600" cy="300" r="1.5"/><circle cx="800" cy="150" r="1"/><circle cx="300" cy="500" r="2"/><circle cx="700" cy="600" r="1.5"/><circle cx="100" cy="700" r="1"/><circle cx="900" cy="800" r="2"/></g></svg>');
           background-size: cover;
           background-position: center;
-          background-attachment: fixed;
+          background-repeat: no-repeat;
           display: flex;
           align-items: center;
           position: relative;
@@ -337,20 +343,21 @@ const Home = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: linear-gradient(45deg, rgba(139, 69, 19, 0.1), rgba(255, 140, 0, 0.1));
+          background: linear-gradient(45deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.05));
           pointer-events: none;
         }
 
         .hero-overlay {
           width: 100%;
-          padding: 0 2rem;
+          padding: 0; /* Remove padding since hero-content has it */
         }
 
         .hero-content {
-          max-width: 1200px;
-          margin: 0 auto;
+          width: 100%; /* Full width of the page */
+          margin: 0;
           color: white;
           text-align: center;
+          padding: 0 3rem; /* Add padding for content spacing */
         }
 
         .hero-title {
@@ -446,25 +453,29 @@ const Home = () => {
         }
 
         .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 2rem;
+          width: 100%; /* Full width of the page */
+          margin: 0;
+          padding: 0 3rem; /* Increased padding for better content spacing */
         }
 
         .features-section, .programs-section, .testimonials-section {
           padding: 5rem 0;
+          background: transparent;
         }
 
         .features-section {
-          background: #f8fafc;
+          background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.8));
+          backdrop-filter: blur(10px);
         }
 
         .programs-section {
-          background: white;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.8));
+          backdrop-filter: blur(10px);
         }
 
         .testimonials-section {
-          background: #f1f5f9;
+          background: linear-gradient(135deg, rgba(241, 245, 249, 0.9), rgba(226, 232, 240, 0.8));
+          backdrop-filter: blur(10px);
         }
 
         .section-header {
@@ -493,17 +504,19 @@ const Home = () => {
         }
 
         .feature-card, .program-card, .testimonial-card {
-          background: white;
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(10px);
           padding: 2rem;
           border-radius: 20px;
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
           transition: all 0.3s ease;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .feature-card:hover, .program-card:hover, .testimonial-card:hover {
           transform: translateY(-5px);
           box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+          background: rgba(255, 255, 255, 0.95);
         }
 
         .feature-icon {
@@ -560,10 +573,11 @@ const Home = () => {
           display: flex;
           gap: 1rem;
           margin-top: 1rem;
+          flex-wrap: wrap;
         }
 
         .program-meta span {
-          background: #f1f5f9;
+          background: rgba(241, 245, 249, 0.8);
           color: #475569;
           padding: 0.5rem 1rem;
           border-radius: 20px;
@@ -793,6 +807,15 @@ const Home = () => {
           .social-links {
             justify-content: center;
           }
+
+          /* Responsive container padding */
+          .container {
+            padding: 0 2rem;
+          }
+
+          .hero-content {
+            padding: 0 2rem;
+          }
         }
 
         @media (max-width: 480px) {
@@ -811,6 +834,20 @@ const Home = () => {
 
           .feature-card, .program-card, .testimonial-card {
             padding: 1.5rem;
+          }
+
+          .program-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          /* Mobile container padding */
+          .container {
+            padding: 0 1rem;
+          }
+
+          .hero-content {
+            padding: 0 1rem;
           }
         }
       `}</style>

@@ -1,9 +1,24 @@
-#root {
-  /* max-width: 1280px; */
-  margin: 0 auto;
-  /* padding: 2rem; */
-  text-align: center;
+/* ========================================= */
+/* APP.CSS - ICTAK PROJECT */
+/* App-specific styles only */
+/* ========================================= */
+
+/* App Container Specific Styles */
+.App {
+  /* These are handled by index.css now, but kept for reference */
+  /* background: transparent; */
+  /* min-height: 100vh; */
+  /* width: 100%; */
+  
+  /* App-specific positioning and layout */
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
+
+/* ========================================= */
+/* LOGO SPECIFIC STYLES */
+/* ========================================= */
 
 .logo {
   height: 6em;
@@ -11,13 +26,16 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+/* Logo animation */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -33,10 +51,74 @@
   }
 }
 
-.card {
-  padding: 2em;
+/* ========================================= */
+/* COMPONENT-SPECIFIC OVERRIDES */
+/* ========================================= */
+
+/* ICTAK specific component styles that need to override global styles */
+
+/* Navbar specific adjustments */
+.App .navbar {
+  /* Any navbar-specific overrides go here */
 }
 
+/* Hero section specific adjustments */
+.App .hero-section {
+  /* Any hero-specific overrides go here */
+}
+
+/* Section spacing adjustments for the main app */
+.App section + section {
+  margin-top: 0; /* Ensure no extra margins between sections */
+}
+
+/* ========================================= */
+/* DEVELOPMENT/DEBUG STYLES */
+/* ========================================= */
+
+/* Only include these in development - remove for production */
 .read-the-docs {
   color: #888;
+  font-size: 0.875rem;
+  margin-top: 2rem;
+  text-align: center;
 }
+
+/* Card specific to App component (if needed) */
+.App .card {
+  padding: 2em;
+  /* Other app-specific card styles */
+}
+
+/* ========================================= */
+/* APP-SPECIFIC UTILITY OVERRIDES */
+/* ========================================= */
+
+/* Only override global styles if absolutely necessary */
+/* Most styling should be in index.css */
+
+/* Example: App-specific button variant */
+.App .btn-app-special {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.App .btn-app-special:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+}
+
+/* ========================================= */
+/* TEMPORARY STYLES */
+/* ========================================= */
+
+/* Styles that might be temporary or experimental */
+/* Keep these separate so they're easy to remove later */
+
+/* Example: Temporary debug borders */
+/* 
+.debug * {
+  border: 1px solid red !important;
+}
+*/
