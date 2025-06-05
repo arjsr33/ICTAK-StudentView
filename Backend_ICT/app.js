@@ -8,7 +8,7 @@ require('./db/dbConnect')
 
 app.use(morgan('dev'))
 app.use(cors({
-  origin: 'https://arjunictak.vercel.app', // Replace with your frontend URL
+  origin: 'https://ictportal.vercel.app', // Replace with your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
