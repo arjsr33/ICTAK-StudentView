@@ -5,7 +5,7 @@ import Navbar from './components/Navbar'
 import DiscussionForum from './components/DiscussionForum'
 import FinalProjectSubmission from './components/FinalProjectSubmission'
 import Home from './components/Home/Home'
-import Login2 from './components/Login2'
+import Login from './components/Login'
 import ProjectDashboard1 from './components/ProjectDashboard1'
 import ProjectDetails from './components/ProjectDetails'
 import ProjectOverview from './components/ProjectOverview'
@@ -38,7 +38,7 @@ function App() {
         <Route path='/contact' element={<Contact />} />
         
         {/* Authentication */}
-        <Route path='/login' element={<Login2 />} />
+        <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
         
         {/* Student Dashboard and Project Management */}
