@@ -1,24 +1,85 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../../services/api';
 
 const Home = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = () => {
+    const authenticated = api.utils.isAuthenticated();
+    setIsAuthenticated(authenticated);
+    
+    if (authenticated) {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        try {
+          setUser(JSON.parse(userData));
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          setUser(null);
+        }
+      }
+    } else {
+      setUser(null);
+    }
+  };
+
+  const handleDashboardClick = () => {
+    if (user && user.email) {
+      navigate('/StudentDashboard', { state: { s_id: user.email } });
+    } else {
+      // Fallback: try to get email from localStorage
+      const userEmail = localStorage.getItem('userEmail');
+      if (userEmail) {
+        navigate('/StudentDashboard', { state: { s_id: userEmail } });
+      } else {
+        alert('User information not found. Please login again.');
+        navigate('/login');
+      }
+    }
+  };
+
   return (
     <>
-      
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-overlay">
           <div className="hero-content">
             <div className="hero-text">
-              <h1 className="hero-title">
-                Build Your Career With 
-                <span className="highlight"> ICTAK</span>
-              </h1>
-              <p className="hero-description">
-                ICT Academy of Kerala provides world-class education and training programs 
-                designed to upskill youth across the state in cutting-edge technologies. 
-                Join our comprehensive courses and transform your future with industry-relevant skills.
-              </p>
+              {isAuthenticated ? (
+                // Authenticated user hero
+                <>
+                  <h1 className="hero-title">
+                    Welcome back{user && user.name ? `, ${user.name.split(' ')[0]}` : ''}!
+                    <span className="highlight"> Continue Learning</span>
+                  </h1>
+                  <p className="hero-description">
+                    Ready to continue your learning journey? Access your personalized dashboard 
+                    to track progress, submit assignments, and engage with your projects. 
+                    Your future in technology awaits!
+                  </p>
+                </>
+              ) : (
+                // Non-authenticated user hero
+                <>
+                  <h1 className="hero-title">
+                    Build Your Career With 
+                    <span className="highlight"> ICTAK</span>
+                  </h1>
+                  <p className="hero-description">
+                    ICT Academy of Kerala provides world-class education and training programs 
+                    designed to upskill youth across the state in cutting-edge technologies. 
+                    Join our comprehensive courses and transform your future with industry-relevant skills.
+                  </p>
+                </>
+              )}
+              
               <div className="hero-stats">
                 <div className="stat-item">
                   <span className="stat-number">50,000+</span>
@@ -33,9 +94,27 @@ const Home = () => {
                   <span className="stat-label">Placement Rate</span>
                 </div>
               </div>
+              
               <div className="hero-buttons">
-                <Link to="/signup" className="btn btn-primary">Get Started</Link>
-                <Link to="/login" className="btn btn-secondary">Login</Link>
+                {isAuthenticated ? (
+                  // Authenticated user buttons
+                  <>
+                    <button onClick={handleDashboardClick} className="btn btn-primary">
+                      <span className="btn-icon">🚀</span>
+                      Go to Dashboard
+                    </button>
+                    <Link to="/courses" className="btn btn-secondary">
+                      <span className="btn-icon">📚</span>
+                      Explore Courses
+                    </Link>
+                  </>
+                ) : (
+                  // Non-authenticated user buttons
+                  <>
+                    <Link to="/signup" className="btn btn-primary">Get Started</Link>
+                    <Link to="/login" className="btn btn-secondary">Login</Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -436,7 +515,14 @@ const Home = () => {
           font-size: 1.1rem;
           transition: all 0.3s ease;
           border: 2px solid transparent;
-          display: inline-block;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+        }
+
+        .btn-icon {
+          font-size: 1.2rem;
         }
 
         .btn-primary {
@@ -447,6 +533,8 @@ const Home = () => {
         .btn-primary:hover {
           transform: translateY(-2px);
           box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+          text-decoration: none;
+          color: white;
         }
 
         .btn-secondary {
@@ -459,6 +547,8 @@ const Home = () => {
         .btn-secondary:hover {
           background: rgba(255, 255, 255, 0.1);
           transform: translateY(-2px);
+          text-decoration: none;
+          color: white;
         }
 
         .container {
@@ -660,7 +750,7 @@ const Home = () => {
         .footer-logo h3 {
           font-size: 1.2rem;
           font-weight: 600;
-          color :rgb(216, 245, 114)
+          color: rgb(216, 245, 114);
         }
 
         .footer-section h4 {
@@ -743,7 +833,7 @@ const Home = () => {
 
         .contact-item p {
           margin: 0;
-          color:rgb(90, 12, 90);
+          color: rgb(90, 12, 90);
           font-size: 0.9rem;
         }
 
@@ -795,6 +885,7 @@ const Home = () => {
 
           .btn {
             width: 200px;
+            justify-content: center;
           }
 
           .features-grid, .programs-grid, .testimonials-grid {
