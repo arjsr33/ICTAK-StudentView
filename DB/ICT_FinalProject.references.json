@@ -1,0 +1,55 @@
+[{
+  "_id": {
+    "$oid": "66a608b6f6856a20021895c1"
+  },
+  "p_id": "P001",
+  "p_name": "Library Management System",
+  "ref1": "https://www.researchgate.net/publication/378435639_Library_management_database_design_and_application",
+  "ref2": "https://www.linkedin.com/pulse/introduction-library-management-system-codeachi-technologies-ajoec/",
+  "ref3": "https://www.studentprojects.live/studentprojectreport/projectreport/library-management-system-case-study/",
+  "ref4": "https://youtu.be/G52wohlgdxY?si=Wv0nv-F-Q7-Z1wNa"
+},
+{
+  "_id": {
+    "$oid": "66a60a31f6856a20021895c5"
+  },
+  "p_id": "P002",
+  "p_name": "Inventory Management System",
+  "ref1": "https://www.optiproerp.com/what-is-inventory-management/",
+  "ref2": "https://www.linkedin.com/pulse/introduction-library-management-system-codeachi-technologies-ajoec/",
+  "ref3": "https://www.researchgate.net/publication/327793184_A_Study_of_Inventory_Management_System_Case_Study",
+  "ref4": "https://youtu.be/wlxx3SCHZKk?si=IjZ7oy_gTMBnp3Nh/"
+},
+{
+  "_id": {
+    "$oid": "66a60b93f6856a20021895c6"
+  },
+  "p_id": "P003",
+  "p_name": "Face Detection System",
+  "ref1": "https://en.wikipedia.org/wiki/Face_detection",
+  "ref2": "https://www.linkedin.com/advice/0/what-most-common-effective-machine-vision-face-recognition",
+  "ref3": "https://dl.acm.org/doi/pdf/10.1145/3533378",
+  "ref4": "https://youtu.be/1T1gUsbyMhI?si=hKP-rq-55bpHM2Tz"
+},
+{
+  "_id": {
+    "$oid": "66a60c18f6856a20021895c7"
+  },
+  "p_id": "P004",
+  "p_name": "Fingerprint Detection System",
+  "ref1": "https://www.innovatrics.com/fingerprint-technology/#:~:text=Fingerprint%20recognition%20is%20the%20process,series%20of%20ridges%20and%20grooves.",
+  "ref2": "https://www.linkedin.com/learning/biometrics-security-and-privacy-considerations/biometrics-security-and-privacy-considerations?u=78898396",
+  "ref3": "https://www.researchgate.net/publication/356852767_Training_Deep_Network_Models_for_Fingerprint_Image_Classification",
+  "ref4": "https://www.routledge.com/AI-and-Deep-Learning-in-Biometric-Security-Trends-Potential-and-Challenges/Jaswal-Kanhangad-Ramachandra/p/book/9780367422448"
+},
+{
+  "_id": {
+    "$oid": "66a60c1ff6856a20021895c8"
+  },
+  "p_id": "P005",
+  "p_name": "E-commerce Platform",
+  "ref1": "https://www.investopedia.com/terms/e/ecommerce.asp#:~:text=E%2Dcommerce%20involves%20the%20purchase,place%20with%20an%20online%20business.",
+  "ref2": "https://www.coursera.org/projects/create-your-ecommerce-store-with-shopify",
+  "ref3": "https://www.researchgate.net/publication/2359510_Database_Design_for_Real-World_E-Commerce_Systems",
+  "ref4": "https://youtu.be/jbfuzcrfjqQ?si=YgUksDrjx2GdMyjg"
+}]
