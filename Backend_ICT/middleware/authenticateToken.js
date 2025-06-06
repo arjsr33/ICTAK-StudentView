@@ -1,17 +1,44 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'your_jwt_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Ensure JWT_SECRET is set
+if (!JWT_SECRET) {
+    console.error('FATAL ERROR: JWT_SECRET is not defined in environment variables');
+    process.exit(1);
+}
 
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     
-    if (token == null) return res.sendStatus(401); // if there isn't any token
+    if (!token) {
+        return res.status(401).json({ 
+            success: false,
+            message: 'Access token required' 
+        });
+    }
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
-        console.log(err);
-        if (err) return res.sendStatus(403);
+        if (err) {
+            if (err.name === 'TokenExpiredError') {
+                return res.status(401).json({ 
+                    success: false,
+                    message: 'Token expired' 
+                });
+            }
+            if (err.name === 'JsonWebTokenError') {
+                return res.status(403).json({ 
+                    success: false,
+                    message: 'Invalid token' 
+                });
+            }
+            return res.status(403).json({ 
+                success: false,
+                message: 'Token verification failed' 
+            });
+        }
         req.user = user;
-        next(); // pass the execution off to whatever request the client intended
+        next();
     });
 }
 

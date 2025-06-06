@@ -1,39 +1,78 @@
-const express = require('express')
-const app = new express()
-const morgan = require('morgan')
-const cors = require('cors')
-app.use(morgan('dev'))
-require('dotenv').config()
-require('./db/dbConnect')
+const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+require('dotenv').config();
 
-app.use(morgan('dev'))
+// Initialize Express app
+const app = express();
+
+// Database connection
+require('./db/dbConnect');
+
+// Middleware
+app.use(morgan('dev'));
+
+// CORS configuration
 app.use(cors({
-  origin: 'https://ictportal.vercel.app', // Replace with your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}))
+    origin: process.env.FRONTEND_URL || 'https://ictportal.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 
-app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-const princyRoutes = require('./routes/princyRoutes')
-const salmanRoutes2 = require('./routes/salmanRoutes2')
-const fathimaRoutes = require('./routes/fathimaRoutes')
-const arjunRoutes = require('./routes/arjunRoutes')
-const discussionRoutes = require('./routes/discussion'); // Import discussion routes
+// Import route modules with descriptive names
+const authRoutes = require('./routes/authRoutes');               // Authentication (login, register)
+const studentRoutes = require('./routes/studentRoutes');         // Student management
+const projectRoutes = require('./routes/projectRoutes');         // Project management
+const submissionRoutes = require('./routes/submissionRoutes');   // Assignment submissions
+const discussionRoutes = require('./routes/discussionRoutes');   // Discussion forums
 
+// API Routes with clear naming
+app.use('/api/auth', authRoutes);                // Authentication endpoints
+app.use('/api/students', studentRoutes);         // Student-related endpoints
+app.use('/api/projects', projectRoutes);         // Project-related endpoints
+app.use('/api/submissions', submissionRoutes);   // Submission-related endpoints
+app.use('/api/discussions', discussionRoutes);   // Discussion forum endpoints
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: 'Server is running',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development'
+    });
+});
 
+// 404 handler for undefined routes
+app.use('*', (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: 'Route not found',
+        path: req.originalUrl
+    });
+});
 
-app.use('/api/princy',princyRoutes)
-app.use('/api/salman',salmanRoutes2)
-app.use('/api/fathima',fathimaRoutes)
-app.use('/api/arjun',arjunRoutes)
-app.use('/api/discussion', discussionRoutes)
+// Global error handler
+app.use((error, req, res, next) => {
+    console.error('Global error handler:', error);
+    
+    res.status(error.status || 500).json({
+        success: false,
+        message: error.message || 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+});
 
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`);
+    console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'https://ictportal.vercel.app'}`);
+});
 
-
-app.listen(process.env.PORT,()=>{
-    console.log(`Server is listening on PORT ${process.env.PORT}:`)
-})
+module.exports = app;
