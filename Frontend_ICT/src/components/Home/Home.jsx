@@ -742,7 +742,7 @@ const Home = () => {
 
         .contact-item p {
           margin: 0;
-          color: #cbd5e1;
+          color:rgb(90, 12, 90);
           font-size: 0.9rem;
         }
 
