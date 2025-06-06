@@ -209,6 +209,7 @@ function ProjectDetails() {
   }
 
   return (
+
     <Container
       maxWidth={false}
       className="dashboard-container"
@@ -218,6 +219,8 @@ function ProjectDetails() {
           : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
       }}
     >
+      <br/><br/><br/><br/>
+
       <div className="project-details-overlay">
         <div className="project-header">
           <Typography variant="h3" className="project-title">

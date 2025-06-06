@@ -116,7 +116,9 @@ const StudentDashboard = () => {
     }
 
     return (
+    
         <div className="enhanced-dashboard-container">
+            <br/><br/>
             {/* Hero Section */}
             <div className="hero-section">
                 <div className="hero-content">

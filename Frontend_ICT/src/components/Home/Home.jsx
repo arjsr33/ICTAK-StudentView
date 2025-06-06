@@ -495,13 +495,13 @@ const Home = () => {
         .section-header h2 {
           font-size: 2.5rem;
           font-weight: 700;
-          color: #1e293b;
+          color: #ea580c;
           margin-bottom: 1rem;
         }
 
         .section-header p {
           font-size: 1.2rem;
-          color: #64748b;
+          color: #ffffff;
           max-width: 600px;
           margin: 0 auto;
         }
@@ -660,6 +660,7 @@ const Home = () => {
         .footer-logo h3 {
           font-size: 1.2rem;
           font-weight: 600;
+          color :rgb(216, 245, 114)
         }
 
         .footer-section h4 {
