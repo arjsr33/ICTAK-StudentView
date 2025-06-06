@@ -11,9 +11,14 @@ import api from '../services/api';
 
 const ProjectDashboard = () => {
   const [isConditionMet, setIsConditionMet] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
+  
   const location = useLocation();
   const navigate = useNavigate();
   const { s_id } = location.state || {};
+  
   const [student, setStudent] = useState({
     sp_id: '',
     sp_name: '',
@@ -25,33 +30,46 @@ const ProjectDashboard = () => {
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
-        // Check authentication using the API utility
         if (!api.utils.isAuthenticated()) {
           alert('Session expired. Please log in again.');
           navigate('/login');
           return;
         }
 
-        const res = await api.student.getStudentsWithProjects(s_id);
-        console.log('Student data fetched:', res[0]); // Fixed: removed .data
+        if (!s_id) {
+          setError('No student ID provided. Please log in again.');
+          setLoading(false);
+          return;
+        }
 
-        setStudent({
-          sp_id: res[0].sp_id,
-          sp_name: res[0].sp_name,
-          p_id: res[0].p_id,
-          p_name: res[0].p_name,
-          start_date: res[0].start_date
-        });
+        console.log('Fetching student project data for:', s_id);
+        const res = await api.student.getStudentsWithProjects(s_id);
+        console.log('Student data fetched:', res);
+
+        if (res && res.length > 0) {
+          const studentData = res[0];
+          setStudent({
+            sp_id: studentData.sp_id,
+            sp_name: studentData.sp_name,
+            p_id: studentData.p_id,
+            p_name: studentData.p_name,
+            start_date: studentData.start_date
+          });
+          console.log('Student state updated:', studentData);
+        } else {
+          setError('No project assigned to this student. Please contact your mentor.');
+        }
       } catch (error) {
         console.error('Error fetching student data:', error);
         const errorMessage = api.utils.handleError(error);
-        alert(errorMessage);
+        setError(errorMessage);
         
-        // Handle authentication errors
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
           api.utils.removeToken();
           navigate('/login');
         }
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -66,77 +84,451 @@ const ProjectDashboard = () => {
       const week4_date = new Date(start_date);
       week4_date.setDate(week4_date.getDate() + 28);
 
+      console.log(`Start date: ${start_date}`);
       console.log(`Current date: ${current_date}`);
       console.log(`Week 4 date: ${week4_date}`);
+      console.log(`Condition met: ${current_date >= week4_date}`);
 
       setIsConditionMet(current_date >= week4_date);
     }
   }, [student.start_date]);
 
+  const menuItems = [
+    { 
+      id: 'overview', 
+      label: 'PROJECT OVERVIEW', 
+      icon: '📋', 
+      enabled: true,
+      component: ProjectOverview,
+      props: { p_id: student.p_id }
+    },
+    { 
+      id: 'references', 
+      label: 'REFERENCE MATERIALS', 
+      icon: '📚', 
+      enabled: true,
+      component: References,
+      props: { p_id: student.p_id }
+    },
+    { 
+      id: 'weekly', 
+      label: 'WEEKLY SUBMISSION', 
+      icon: '📝', 
+      enabled: true,
+      component: WeeklySubmission,
+      props: { s_id: s_id }
+    },
+    { 
+      id: 'discussion', 
+      label: 'DISCUSSION FORUM', 
+      icon: '💬', 
+      enabled: true,
+      component: DiscussionForum,
+      props: { s_id: s_id }
+    },
+    { 
+      id: 'grades', 
+      label: 'MY GRADES', 
+      icon: '📊', 
+      enabled: true,
+      component: Grades,
+      props: {}
+    },
+    { 
+      id: 'final', 
+      label: 'FINAL PROJECT SUBMISSION', 
+      icon: '🎯', 
+      enabled: isConditionMet,
+      component: FinalProjectSubmission,
+      props: { s_id: s_id }
+    },
+    { 
+      id: 'viva', 
+      label: 'VIVA VOCE', 
+      icon: '🎤', 
+      enabled: isConditionMet,
+      component: VivaVoce,
+      props: {}
+    }
+  ];
+
+  const renderActiveComponent = () => {
+    const activeMenuItem = menuItems.find(item => item.id === activeTab);
+    if (!activeMenuItem) {
+      return <div style={styles.errorMessage}>Component not found</div>;
+    }
+
+    const Component = activeMenuItem.component;
+    const props = activeMenuItem.props;
+
+    return <Component {...props} />;
+  };
+
+  if (loading) {
+    return (
+      <div style={styles.dashboardContainer}>
+        <div style={styles.loadingContainer}>
+          <div style={styles.loadingSpinner}></div>
+          <h3 style={styles.loadingText}>Loading project dashboard...</h3>
+          <p style={styles.loadingSubtext}>Please wait while we fetch your project data</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={styles.dashboardContainer}>
+        <div style={styles.errorContainer}>
+          <div style={styles.errorIcon}>⚠️</div>
+          <h3 style={styles.errorTitle}>Dashboard Error</h3>
+          <p style={styles.errorMessage}>{error}</p>
+          <div style={styles.errorActions}>
+            <button 
+              style={styles.retryButton} 
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </button>
+            <button 
+              style={styles.backButton} 
+              onClick={() => navigate('/StudentDashboard', { state: { s_id: s_id } })}
+            >
+              Back to Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <h2 className="text-primary py-2 text-center"><b><u>PROJECT DASHBOARD</u></b></h2>
-      <h4 className="py-2 text-center">
-        <u>
-          <i>Hi</i> <b>{student.sp_name}</b>,  
-          <i>You have started on : </i><b>{new Date(student.start_date).toLocaleDateString()}</b>
-        </u>
-      </h4>
-      <div className="row">
-        <div className="d-flex">
-          <div className="col-2">
-            <div className="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-              <button className="nav-link navLink active" id="v-pills-pjtDoc-tab" data-bs-toggle="pill" data-bs-target="#v-pills-pjtDoc" type="button" role="tab" aria-controls="v-pills-pjtDoc" aria-selected="true">PROJECT OVERVIEW DOCUMENT</button>
-              -----------------
-              <button className="nav-link navLink" id="v-pills-reference-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reference" type="button" role="tab" aria-controls="v-pills-reference" aria-selected="false">REFERENCE MATERIALS</button>
-              -----------------
-              <button className="nav-link navLink" id="v-pills-weekly-tab" data-bs-toggle="pill" data-bs-target="#v-pills-weekly" type="button" role="tab" aria-controls="v-pills-weekly" aria-selected="false">WEEKLY SUBMISSION</button>
-              -----------------
-              <button className="nav-link navLink" id="v-pills-discussion-tab" data-bs-toggle="pill" data-bs-target="#v-pills-discussion" type="button" role="tab" aria-controls="v-pills-discussion" aria-selected="false">DISCUSSION FORUM</button>
-              -----------------
-              <button className="nav-link navLink" id="v-pills-grades-tab" data-bs-toggle="pill" data-bs-target="#v-pills-grades" type="button" role="tab" aria-controls="v-pills-grades" aria-selected="false">MY GRADES</button>
-              -----------------
-              {(isConditionMet) ? (
-                <button className="nav-link navLink" id="v-pills-final-tab" data-bs-toggle="pill" data-bs-target="#v-pills-final" type="button" role="tab" aria-controls="v-pills-final" aria-selected="false">FINAL PROJECT SUBMISSION</button>
-              ) : (
-                <div>
-                  <button className="nav-link navLink" id="v-pills-final-tab" data-bs-toggle="pill" data-bs-target="#v-pills-final" type="button" role="tab" aria-controls="v-pills-final" aria-selected="false" disabled>FINAL PROJECT SUBMISSION</button>
-                  (You are not eligible now!!!)
-                </div>
-              )}
-              -----------------
-              {(isConditionMet) ? (
-                <button className="nav-link navLink" id="v-pills-viva-tab" data-bs-toggle="pill" data-bs-target="#v-pills-viva" type="button" role="tab" aria-controls="v-pills-viva" aria-selected="false">VIVA VOCE</button>
-              ) : (
-                <div>
-                  <button className="nav-link navLink" id="v-pills-viva-tab" data-bs-toggle="pill" data-bs-target="#v-pills-viva" type="button" role="tab" aria-controls="v-pills-viva" aria-selected="false" disabled>VIVA VOCE</button>
-                  (You are not eligible now!!!)
-                </div>
-              )}
-              -----------------
-              <br /><br />
-            </div>
-          </div>
-          <div className="col-0.25">
-            <div className="d-flex" style={{ height: 800 }}>
-              <div className="vr"></div>
-            </div>
-          </div>
-          <div className="col-9 ms-5">
-            <div className="tab-content" id="v-pills-tabContent">
-              <div className="tab-pane fade show active" id="v-pills-pjtDoc" role="tabpanel" aria-labelledby="v-pills-pjtDoc-tab" tabIndex="0"><ProjectOverview p_id={student.p_id} /></div>
-              <div className="tab-pane fade" id="v-pills-reference" role="tabpanel" aria-labelledby="v-pills-reference-tab" tabIndex="0"><br /><br /><References p_id={student.p_id} /></div>
-              <div className="tab-pane fade" id="v-pills-weekly" role="tabpanel" aria-labelledby="v-pills-weekly-tab" tabIndex="0"><WeeklySubmission s_id={s_id} /></div>
-              <div className="tab-pane fade" id="v-pills-discussion" role="tabpanel" aria-labelledby="v-pills-discussion-tab" tabIndex="0"><br /><br /><DiscussionForum s_id={s_id} /></div>
-              <div className="tab-pane fade" id="v-pills-grades" role="tabpanel" aria-labelledby="v-pills-grades-tab" tabIndex="0"><br /><br /><Grades /></div>
-              <div className="tab-pane fade" id="v-pills-final" role="tabpanel" aria-labelledby="v-pills-final-tab" tabIndex="0"><FinalProjectSubmission s_id={s_id} /></div>
-              <div className="tab-pane fade" id="v-pills-viva" role="tabpanel" aria-labelledby="v-pills-viva-tab" tabIndex="0"><br /><br /><VivaVoce /></div>
-            </div>
+    <div style={styles.dashboardContainer}>
+      {/* Header */}
+      <div style={styles.header}>
+        <h1 style={styles.title}>PROJECT DASHBOARD</h1>
+        <div style={styles.studentInfo}>
+          <h3 style={styles.welcomeText}>
+            Welcome, <strong>{student.sp_name || 'Student'}</strong>
+          </h3>
+          {student.p_name && (
+            <p style={styles.projectInfo}>
+              Project: <strong>{student.p_name}</strong>
+            </p>
+          )}
+          {student.start_date && (
+            <p style={styles.dateInfo}>
+              Started: <strong>{new Date(student.start_date).toLocaleDateString()}</strong>
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div style={styles.mainContent}>
+        {/* Sidebar Navigation */}
+        <div style={styles.sidebar}>
+          <nav style={styles.navigation}>
+            {menuItems.map((item, index) => (
+              <React.Fragment key={item.id}>
+                <button
+                  style={{
+                    ...styles.navButton,
+                    ...(activeTab === item.id ? styles.navButtonActive : {}),
+                    ...(item.enabled ? {} : styles.navButtonDisabled)
+                  }}
+                  onClick={() => item.enabled && setActiveTab(item.id)}
+                  disabled={!item.enabled}
+                >
+                  <span style={styles.navIcon}>{item.icon}</span>
+                  <span style={styles.navText}>{item.label}</span>
+                  {!item.enabled && (
+                    <span style={styles.disabledBadge}>
+                      {isConditionMet ? 'Soon' : 'After 4 weeks'}
+                    </span>
+                  )}
+                </button>
+                {index < menuItems.length - 1 && <div style={styles.divider}></div>}
+              </React.Fragment>
+            ))}
+          </nav>
+        </div>
+
+        {/* Content Area */}
+        <div style={styles.contentArea}>
+          <div style={styles.contentWrapper}>
+            {renderActiveComponent()}
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+const styles = {
+  dashboardContainer: {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    paddingTop: '90px',
+    fontFamily: 'Inter, system-ui, sans-serif',
+  },
+  
+  loadingContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '60vh',
+    color: 'white',
+    textAlign: 'center',
+    padding: '2rem',
+  },
+  
+  loadingSpinner: {
+    width: '60px',
+    height: '60px',
+    border: '4px solid rgba(255, 255, 255, 0.3)',
+    borderTop: '4px solid white',
+    borderRadius: '50%',
+    animation: 'spin 1s linear infinite',
+    marginBottom: '1rem',
+  },
+  
+  loadingText: {
+    color: 'white',
+    marginBottom: '0.5rem',
+  },
+  
+  loadingSubtext: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: '1rem',
+  },
+  
+  errorContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '60vh',
+    color: 'white',
+    textAlign: 'center',
+    padding: '2rem',
+  },
+  
+  errorIcon: {
+    fontSize: '4rem',
+    marginBottom: '1rem',
+  },
+  
+  errorTitle: {
+    marginBottom: '1rem',
+    color: '#ff6b6b',
+  },
+  
+  errorMessage: {
+    marginBottom: '2rem',
+    maxWidth: '500px',
+    background: 'rgba(255, 107, 107, 0.1)',
+    padding: '1rem',
+    borderRadius: '8px',
+    border: '1px solid rgba(255, 107, 107, 0.3)',
+  },
+  
+  errorActions: {
+    display: 'flex',
+    gap: '1rem',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  
+  retryButton: {
+    padding: '0.75rem 2rem',
+    backgroundColor: '#ff6b6b',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: '600',
+    transition: 'all 0.3s ease',
+  },
+  
+  backButton: {
+    padding: '0.75rem 2rem',
+    backgroundColor: 'transparent',
+    color: 'white',
+    border: '2px solid white',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: '600',
+    transition: 'all 0.3s ease',
+  },
+  
+  header: {
+    background: 'rgba(255, 255, 255, 0.95)',
+    backdropFilter: 'blur(10px)',
+    padding: '2rem',
+    marginBottom: '2rem',
+    borderRadius: '16px',
+    margin: '0 2rem 2rem',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+  },
+  
+  title: {
+    textAlign: 'center',
+    color: '#2D3748',
+    fontSize: '2.5rem',
+    fontWeight: '800',
+    marginBottom: '1rem',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+  },
+  
+  studentInfo: {
+    textAlign: 'center',
+  },
+  
+  welcomeText: {
+    color: '#4A5568',
+    marginBottom: '0.5rem',
+    fontSize: '1.3rem',
+  },
+  
+  projectInfo: {
+    color: '#718096',
+    marginBottom: '0.5rem',
+    fontSize: '1.1rem',
+  },
+  
+  dateInfo: {
+    color: '#718096',
+    fontSize: '1rem',
+  },
+  
+  mainContent: {
+    display: 'flex',
+    gap: '2rem',
+    padding: '0 2rem 2rem',
+    minHeight: 'calc(100vh - 300px)',
+  },
+  
+  sidebar: {
+    width: '320px',
+    flexShrink: 0,
+  },
+  
+  navigation: {
+    background: 'rgba(255, 255, 255, 0.95)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: '16px',
+    padding: '1rem',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+  },
+  
+  navButton: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+    padding: '1rem',
+    background: 'transparent',
+    border: 'none',
+    borderRadius: '12px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    color: '#4A5568',
+    textAlign: 'left',
+    position: 'relative',
+  },
+  
+  navButtonActive: {
+    background: '#667eea',
+    color: 'white',
+    transform: 'translateX(4px)',
+  },
+  
+  navButtonDisabled: {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+    background: '#f7fafc',
+  },
+  
+  navIcon: {
+    fontSize: '1.2rem',
+    width: '24px',
+    textAlign: 'center',
+  },
+  
+  navText: {
+    flex: 1,
+    fontSize: '0.85rem',
+  },
+  
+  disabledBadge: {
+    fontSize: '0.7rem',
+    background: '#fed7d7',
+    color: '#c53030',
+    padding: '0.2rem 0.5rem',
+    borderRadius: '6px',
+    fontWeight: '500',
+  },
+  
+  divider: {
+    height: '1px',
+    background: '#e2e8f0',
+    margin: '0.5rem 0',
+  },
+  
+  contentArea: {
+    flex: 1,
+    background: 'rgba(255, 255, 255, 0.95)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: '16px',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+    overflow: 'hidden',
+  },
+  
+  contentWrapper: {
+    padding: '2rem',
+    height: '100%',
+    overflow: 'auto',
+  },
+};
+
+// Add keyframe animation
+const styleSheet = document.createElement('style');
+styleSheet.type = 'text/css';
+styleSheet.innerText = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-content {
+      flex-direction: column !important;
+    }
+    
+    .sidebar {
+      width: 100% !important;
+    }
+    
+    .navigation {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+      gap: 0.5rem !important;
+    }
+    
+    .divider {
+      display: none !important;
+    }
+  }
+`;
+document.head.appendChild(styleSheet);
 
 export default ProjectDashboard;
