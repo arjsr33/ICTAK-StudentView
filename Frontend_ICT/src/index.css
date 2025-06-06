@@ -1250,7 +1250,7 @@ section:not(.hero-section) {
   justify-content: center;
   background: rgba(255, 107, 53, 0.05); /* Very subtle orange tint */
   border-left: 3px solid #ff6b35; /* Orange accent border */
-  transform: translateY(-2px);
+  transform: translateX(8px);
 }
 
 .contact-item:last-child {
