@@ -9,7 +9,7 @@ import Grades from './Grades';
 import ProjectOverview from './ProjectOverview';
 import api from '../services/api';
 
-const ProjectDashboard1 = () => {
+const ProjectDashboard = () => {
   const [isConditionMet, setIsConditionMet] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -139,4 +139,4 @@ const ProjectDashboard1 = () => {
   );
 };
 
-export default ProjectDashboard1;
+export default ProjectDashboard;

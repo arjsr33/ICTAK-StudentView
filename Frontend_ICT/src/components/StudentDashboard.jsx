@@ -79,7 +79,7 @@ const StudentDashboard = () => {
     }, [studentData.s_course, navigate]);
 
     const goToProjectDashboard = () => {
-        navigate('/ProjectDashboard1', { state: { s_id: s_id } });
+        navigate('/ProjectDashboard', { state: { s_id: s_id } });
     };
 
     const goToProjectDetails = (item) => {

@@ -138,7 +138,7 @@ function ProjectDetails() {
   };
 
   const goToProjectDashboard = () => {
-    navigate('/ProjectDashboard1', { 
+    navigate('/ProjectDashboard', { 
       state: { 
         s_id: studentData.s_id, 
         p_id: selectedProjectId 

@@ -6,7 +6,7 @@ import DiscussionForum from './components/DiscussionForum'
 import FinalProjectSubmission from './components/FinalProjectSubmission'
 import Home from './components/Home/Home'
 import Login from './components/Login'
-import ProjectDashboard1 from './components/ProjectDashboard1'
+import ProjectDashboard from './components/ProjectDashboard'
 import ProjectDetails from './components/ProjectDetails'
 import ProjectOverview from './components/ProjectOverview'
 import References from './components/References'
@@ -45,7 +45,7 @@ function App() {
         <Route path='/StudentDashboard' element={<StudentDashboard />} />
         <Route path='/projectDetails/:id' element={<ProjectDetails />} />
         <Route path='/projectOverview/:id' element={<ProjectOverview />} />
-        <Route path='ProjectDashboard1' element={<ProjectDashboard1 />} />
+        <Route path='ProjectDashboard' element={<ProjectDashboard />} />
         
         {/* Project Components */}
         <Route path='/references' element={<References />} />
