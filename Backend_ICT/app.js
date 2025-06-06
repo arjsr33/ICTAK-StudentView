@@ -7,11 +7,13 @@ require('dotenv').config();
 // Initialize Express app
 const app = express();
 
-// Database connection
-require('./db/dbConnect');
+// Database connection with error handling
+const connectDB = require('./db/dbConnect');
 
 // Middleware
-app.use(morgan('dev'));
+if (process.env.NODE_ENV !== 'production') {
+    app.use(morgan('dev'));
+}
 
 // Enhanced CORS configuration
 app.use(cors({
@@ -30,19 +32,27 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Import route modules with descriptive names
-const authRoutes = require('./routes/authRoutes');               // Authentication (login, register)
-const studentRoutes = require('./routes/studentRoutes');         // Student management
-const projectRoutes = require('./routes/projectRoutes');         // Project management
-const submissionRoutes = require('./routes/submissionRoutes');   // Assignment submissions
-const discussionRoutes = require('./routes/discussionRoutes');   // Discussion forums
+// Import route modules with error handling
+let authRoutes, studentRoutes, projectRoutes, submissionRoutes, discussionRoutes;
 
-// API Routes with clear naming
-app.use('/api/auth', authRoutes);                // Authentication endpoints
-app.use('/api/students', studentRoutes);         // Student-related endpoints
-app.use('/api/projects', projectRoutes);         // Project-related endpoints
-app.use('/api/submissions', submissionRoutes);   // Submission-related endpoints
-app.use('/api/discussions', discussionRoutes);   // Discussion forum endpoints
+try {
+    authRoutes = require('./routes/authRoutes');
+    studentRoutes = require('./routes/studentRoutes');
+    projectRoutes = require('./routes/projectRoutes');
+    submissionRoutes = require('./routes/submissionRoutes');
+    discussionRoutes = require('./routes/discussionRoutes');
+    console.log('✅ All route modules loaded successfully');
+} catch (error) {
+    console.error('❌ Error loading route modules:', error.message);
+    console.error('Stack:', error.stack);
+}
+
+// API Routes with error handling
+if (authRoutes) app.use('/api/auth', authRoutes);
+if (studentRoutes) app.use('/api/students', studentRoutes);
+if (projectRoutes) app.use('/api/projects', projectRoutes);
+if (submissionRoutes) app.use('/api/submissions', submissionRoutes);
+if (discussionRoutes) app.use('/api/discussions', discussionRoutes);
 
 // Enhanced health check endpoint
 app.get('/api/health', (req, res) => {
@@ -84,30 +94,11 @@ app.get('/api/health', (req, res) => {
             ]
         },
         routes: {
-            auth: {
-                login: 'POST /api/auth/login',
-                register: 'POST /api/auth/register',
-                verify: 'GET /api/auth/verify-token'
-            },
-            students: {
-                course: 'GET /api/students/course/:studentId',
-                projects: 'GET /api/students/projects/:studentId',
-                selectProject: 'POST /api/students/select-project'
-            },
-            projects: {
-                available: 'GET /api/projects/available/:course',
-                details: 'GET /api/projects/details/:projectId',
-                references: 'GET /api/projects/references/:projectId'
-            },
-            submissions: {
-                weekly: 'POST /api/submissions/weekly/:studentId',
-                project: 'POST /api/submissions/project/:studentId'
-            },
-            discussions: {
-                get: 'GET /api/discussions/:studentId',
-                addQuestion: 'POST /api/discussions/:studentId/questions',
-                addAnswer: 'POST /api/discussions/:studentId/questions/:questionId/answers'
-            }
+            auth: authRoutes ? 'loaded' : 'failed',
+            students: studentRoutes ? 'loaded' : 'failed',
+            projects: projectRoutes ? 'loaded' : 'failed',
+            submissions: submissionRoutes ? 'loaded' : 'failed',
+            discussions: discussionRoutes ? 'loaded' : 'failed'
         }
     };
 
@@ -204,15 +195,11 @@ app.use('*', (req, res) => {
 
 // Global error handler
 app.use((error, req, res, next) => {
-    console.error('='.repeat(50));
     console.error('❌ Global Error Handler Triggered');
-    console.error('='.repeat(50));
     console.error('Error:', error.message);
     console.error('Stack:', error.stack);
     console.error('Request URL:', req.originalUrl);
     console.error('Request Method:', req.method);
-    console.error('Request Headers:', req.headers);
-    console.error('='.repeat(50));
     
     // Determine error status
     const status = error.status || error.statusCode || 500;
@@ -231,7 +218,8 @@ app.use((error, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
+
+app.listen(PORT, () => {
     console.log('='.repeat(60));
     console.log('🚀 ICTAK BACKEND SERVER STARTED');
     console.log('='.repeat(60));
@@ -255,84 +243,45 @@ const server = app.listen(PORT, () => {
     console.log(`💬 Discussions: /api/discussions`);
     console.log('='.repeat(60));
     
-    // Test database connection status
+    // Check database connection status after a delay
     setTimeout(() => {
         if (mongoose.connection.readyState === 1) {
             console.log('✅ DATABASE: Connected Successfully');
             console.log(`📊 Database Name: ${mongoose.connection.name}`);
             console.log(`🏠 Database Host: ${mongoose.connection.host}`);
         } else {
-            console.log('❌ DATABASE: Connection Failed or Pending');
+            console.log('⚠️  DATABASE: Connection Pending or Failed');
             console.log(`🔄 Connection State: ${mongoose.connection.readyState}`);
+            console.log('💡 Server will still work, but database operations will fail');
         }
         console.log('='.repeat(60));
         console.log('🎯 SERVER READY TO HANDLE REQUESTS!');
         console.log('='.repeat(60));
-    }, 2000); // Give database time to connect
+    }, 3000); // Give database more time to connect
 });
 
 // Enhanced error handling for production
 process.on('unhandledRejection', (err, promise) => {
-    console.error('='.repeat(50));
     console.error('❌ UNHANDLED PROMISE REJECTION');
-    console.error('='.repeat(50));
     console.error('Error:', err.message);
-    console.error('Promise:', promise);
     console.error('Stack:', err.stack);
-    console.error('='.repeat(50));
     
-    // Close server & exit process in development
+    // Don't exit in production (Vercel functions)
     if (process.env.NODE_ENV !== 'production') {
-        server.close(() => {
-            console.log('💀 Server closed due to unhandled promise rejection');
-            process.exit(1);
-        });
+        console.log('💀 Shutting down due to unhandled promise rejection');
+        process.exit(1);
     }
 });
 
 process.on('uncaughtException', (err) => {
-    console.error('='.repeat(50));
     console.error('❌ UNCAUGHT EXCEPTION');
-    console.error('='.repeat(50));
     console.error('Error:', err.message);
     console.error('Stack:', err.stack);
-    console.error('='.repeat(50));
     
     // Always exit on uncaught exception
     console.log('💀 Shutting down due to uncaught exception');
     process.exit(1);
 });
 
-// Graceful shutdown handlers
-process.on('SIGTERM', () => {
-    console.log('='.repeat(50));
-    console.log('👋 SIGTERM RECEIVED - Graceful Shutdown');
-    console.log('='.repeat(50));
-    
-    server.close(() => {
-        console.log('✅ HTTP server closed');
-        mongoose.connection.close(() => {
-            console.log('✅ Database connection closed');
-            console.log('👋 Process terminated gracefully');
-            process.exit(0);
-        });
-    });
-});
-
-process.on('SIGINT', () => {
-    console.log('='.repeat(50));
-    console.log('👋 SIGINT RECEIVED - Graceful Shutdown');
-    console.log('='.repeat(50));
-    
-    server.close(() => {
-        console.log('✅ HTTP server closed');
-        mongoose.connection.close(() => {
-            console.log('✅ Database connection closed');
-            console.log('👋 Process terminated gracefully');
-            process.exit(0);
-        });
-    });
-});
-
-// Export the app for testing purposes
+// Export the app for Vercel
 module.exports = app;
