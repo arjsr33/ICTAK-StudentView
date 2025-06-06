@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 const StudentDashboard = () => {
     const navigate = useNavigate();
@@ -17,10 +17,9 @@ const StudentDashboard = () => {
     });
     const [projects, setProjects] = useState([]);
 
-    const token = localStorage.getItem('token'); // Retrieve the token from local storage
-
     useEffect(() => {
-        if (!token) {
+        // Check authentication
+        if (!api.utils.isAuthenticated()) {
             alert('You are not logged in. Please log in.');
             navigate('/login');
             return;
@@ -28,42 +27,40 @@ const StudentDashboard = () => {
 
         const fetchStudentData = async () => {
             try {
-                const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/studentCourse/${s_id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}` // Include the token in the headers
-                    }
-                });
-                console.log('Axios res.data(student) is - ', res.data);
-                setStudentData(res.data);
+                const studentRes = await api.student.getStudentCourse(s_id);
+                console.log('Student data is - ', studentRes);
+                setStudentData(studentRes);
             } catch (error) {
                 console.error('Error fetching student data:', error);
-                if (error.response && error.response.status === 403) {
-                    alert('Your session has expired or you do not have permission. Please log in again.');
-                    localStorage.removeItem('token'); // Clear the token
-                    navigate('/login'); // Redirect to login page if session is expired
+                const errorMessage = api.utils.handleError(error);
+                alert(errorMessage);
+                
+                // If authentication error, redirect to login
+                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                    api.utils.removeToken();
+                    navigate('/login');
                 }
             }
         };
 
         fetchStudentData();
-    }, [s_id, token, navigate]);
+    }, [s_id, navigate]);
 
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/availableProjects/${studentData.s_course}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}` // Include the token in the headers
-                    }
-                });
-                console.log('Axios res.data(projects) is - ', res.data);
-                setProjects(res.data);
+                const projectsRes = await api.project.getAvailableProjects(studentData.s_course);
+                console.log('Projects data is - ', projectsRes);
+                setProjects(projectsRes);
             } catch (error) {
                 console.error('Error fetching projects:', error);
-                if (error.response && error.response.status === 403) {
-                    alert('Your session has expired or you do not have permission. Please log in again.');
-                    localStorage.removeItem('token'); // Clear the token
-                    navigate('/login'); // Redirect to login page if session is expired
+                const errorMessage = api.utils.handleError(error);
+                alert(errorMessage);
+                
+                // If authentication error, redirect to login
+                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                    api.utils.removeToken();
+                    navigate('/login');
                 }
             }
         };
@@ -71,43 +68,19 @@ const StudentDashboard = () => {
         if (studentData.s_course) {
             fetchProjects();
         }
-    }, [studentData.s_course, token, navigate]);
+    }, [studentData.s_course, navigate]);
 
-    function postStdPjt() {
-        axios.post(`https://arjun-ictak.vercel.app/api/princy/postStdPjt`, {
-            sp_id: "S0011",
-            sp_name: "Shamna",
-            p_id: "P004",
-            p_name: "Fingerprint Detection System"
-        }, {
-            headers: {
-                Authorization: `Bearer ${token}` // Include the token in the headers
-            }
-        })
-        .then((res) => {
-            console.log('Axios postStdPjt is - ', res.data);
-        })
-        .catch((error) => {
-            console.error('Error posting student project:', error);
-            if (error.response && error.response.status === 403) {
-                alert('Your session has expired or you do not have permission. Please log in again.');
-                localStorage.removeItem('token'); // Clear the token
-                navigate('/login'); // Redirect to login page if session is expired
-            }
-        });
-    }
 
-    function goToProjectDashboard() {
+    const goToProjectDashboard = () => {
         navigate('/ProjectDashboard1', { state: { s_id: s_id } });
-    }
+    };
 
-    function goToProjectDetails(item) {
+    const goToProjectDetails = (item) => {
         navigate(`/projectDetails/${item.id}`, { state: { studentData: studentData } });
-    }
+    };
 
     return (
         <div>
-
             <h2 className="text-primary py-2 text-center"><u>The Student Dashboard</u></h2>
             <div className="row">
                 <br /><br /><br />

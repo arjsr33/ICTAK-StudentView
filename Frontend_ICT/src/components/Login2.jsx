@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import api from '../services/api';
+
 
 const Login2 = () => {
   const [email, setEmail] = useState('');
@@ -12,8 +14,7 @@ const Login2 = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://arjun-ictak.vercel.app/api/salman/login', { email, password });
-      const { data } = response;
+      const { data } = await api.auth.login(email, password);
 
       if (data.message === "Login successful") {
         // Save the token in local storage

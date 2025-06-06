@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import api from '../services/api';
+
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -63,7 +65,7 @@ const Signup = () => {
     }
 
     try {
-      const result = await axios.post('https://arjun-ictak.vercel.app/api/salman/signup', { name, email, password, phone, batch });
+      const result = await api.auth.signup(name, email, password, phone, batch);
       console.log(result);
       setSuccess('Signup successful! Redirecting to login...');
       setError('');

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 const WeeklySubmission = ({ s_id }) => {
   const [s_start_date, set_s_start_date] = useState(null);
@@ -15,27 +16,38 @@ const WeeklySubmission = ({ s_id }) => {
     comments: '',
   });
 
-  // Fetch JWT token from local storage or context
-  const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/studentswithprojects/${s_id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log(`Axios res.data[0].start_date (studentswithprojects) in WeeklySubmission is - `);
-        console.log(res.data[0].start_date);
-        set_s_start_date(res.data[0].start_date);
+        // Check authentication
+        if (!api.utils.isAuthenticated()) {
+          alert('Session expired. Please log in again.');
+          navigate('/login');
+          return;
+        }
+
+        const res = await api.student.getStudentsWithProjects(s_id);
+        console.log(`Student project start date in WeeklySubmission is - ${res[0].start_date}`); // Fixed: removed .data
+        set_s_start_date(res[0].start_date);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching student project data:', error);
+        const errorMessage = api.utils.handleError(error);
+        alert(errorMessage);
+        
+        // Handle authentication errors
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          api.utils.removeToken();
+          navigate('/login');
+        }
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [s_id, token]);
+  }, [s_id, navigate]); // Removed token dependency
 
   useEffect(() => {
     if (s_start_date) {
@@ -62,24 +74,24 @@ const WeeklySubmission = ({ s_id }) => {
 
   const submitForm = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('selectedWeek', form.selectedWeek);
-    formData.append('links', form.links);
-    formData.append('files', form.files);
-    formData.append('comments', form.comments);
-    console.log('formdata is -');
-    console.log(formData);
-
+    
     try {
-      const result = await axios.post(`https://arjun-ictak.vercel.app/api/princy/uploadWeek/${s_id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
+      // Create FormData using the API utility
+      const formData = api.utils.createFormData({
+        selectedWeek: form.selectedWeek,
+        links: form.links,
+        files: form.files,
+        comments: form.comments
       });
-      console.log(`Axios res.data(projects) is - `);
-      console.log(result.data);
+
+      console.log('Submitting weekly submission for student:', s_id);
+
+      const result = await api.submission.uploadWeeklySubmission(s_id, formData);
+      console.log('Weekly submission result:', result);
+      
       alert('Congrats!!! You have submitted your work for the week');
+      
+      // Reset form
       setForm({
         selectedWeek: '',
         links: '',
@@ -88,7 +100,14 @@ const WeeklySubmission = ({ s_id }) => {
       });
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('Failed to submit. Please try again.');
+      const errorMessage = api.utils.handleError(error);
+      alert(`Failed to submit: ${errorMessage}`);
+      
+      // Handle authentication errors
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        api.utils.removeToken();
+        navigate('/login');
+      }
     }
   };
 

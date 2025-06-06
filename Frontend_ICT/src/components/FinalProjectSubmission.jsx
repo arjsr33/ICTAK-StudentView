@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 const FinalProjectSubmission = ({ s_id }) => {
   const [form, setForm] = useState({
@@ -8,45 +9,72 @@ const FinalProjectSubmission = ({ s_id }) => {
     comments: ''
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchStudentProjectData = async () => {
       try {
-        const token = localStorage.getItem('token'); // Retrieve the token from local storage
-        const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/studentswithprojects/${s_id}`, {
-          headers: {
-            Authorization: token // Include the token in the headers
-          }
-        });
-        console.log('Axios res.data(studentswithprojects) in FinalProjectSubmission is -', res.data);
-        // setStudentData(res.data);
+        // Check authentication
+        if (!api.utils.isAuthenticated()) {
+          alert('Session expired. Please log in again.');
+          navigate('/login');
+          return;
+        }
+
+        const res = await api.student.getStudentsWithProjects(s_id);
+        console.log('Student project data in FinalProjectSubmission is -', res);
+        // Note: Currently just logging the data, not using it for anything
+        // If you need to use this data, set it to state
       } catch (error) {
         console.error('Error fetching student project data:', error);
+        const errorMessage = api.utils.handleError(error);
+        alert(errorMessage);
+        
+        // Handle authentication errors
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          api.utils.removeToken();
+          navigate('/login');
+        }
       }
     };
 
     fetchStudentProjectData();
-  }, [s_id]);
+  }, [s_id, navigate]);
 
   const submitForm = async (e) => {
     e.preventDefault();
-    const formdata = new FormData();
-    formdata.append('links', form.links);
-    formdata.append('files', form.files);
-    formdata.append('comments', form.comments);
-    console.log('formdata is -', formdata);
-
+    
     try {
-      const token = localStorage.getItem('token'); // Retrieve the token from local storage
-      const result = await axios.post(`https://arjun-ictak.vercel.app/api/princy/uploadProject/${s_id}`, formdata, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: token // Include the token in the headers
-        }
+      // Create FormData using the API utility
+      const formData = api.utils.createFormData({
+        links: form.links,
+        files: form.files,
+        comments: form.comments
       });
-      console.log('Axios res.data in FinalProjectSubmission is -', result.data);
+
+      console.log('Submitting final project for student:', s_id);
+
+      const result = await api.submission.uploadFinalProject(s_id, formData);
+      console.log('Final project submission result:', result);
+      
       alert('Congrats!!! You have submitted your final project');
+      
+      // Reset form after successful submission
+      setForm({
+        links: '',
+        files: '',
+        comments: ''
+      });
     } catch (error) {
       console.error('Error submitting form:', error);
+      const errorMessage = api.utils.handleError(error);
+      alert(`Failed to submit: ${errorMessage}`);
+      
+      // Handle authentication errors
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        api.utils.removeToken();
+        navigate('/login');
+      }
     }
   };
 
@@ -62,6 +90,7 @@ const FinalProjectSubmission = ({ s_id }) => {
               className="form-control"
               value={form.links}
               onChange={(e) => setForm({ ...form, links: e.target.value })}
+              placeholder="Enter project links (GitHub, Demo, Documentation, etc.)"
             ></textarea>
           </div>
         </div>
@@ -71,9 +100,13 @@ const FinalProjectSubmission = ({ s_id }) => {
             <input
               className="form-control"
               type="file"
-              name="weeklyFile"
+              name="projectFile"
               onChange={(e) => setForm({ ...form, files: e.target.files[0] })}
+              accept=".pdf,.doc,.docx,.zip,.rar"
             />
+            <small className="text-muted">
+              Accepted formats: PDF, DOC, DOCX, ZIP, RAR (Max size: 10MB)
+            </small>
           </div>
         </div>
         <div className="row mb-3">
@@ -83,12 +116,16 @@ const FinalProjectSubmission = ({ s_id }) => {
               className="form-control"
               value={form.comments}
               onChange={(e) => setForm({ ...form, comments: e.target.value })}
+              placeholder="Describe your project, technologies used, challenges faced, etc."
+              rows="4"
             ></textarea>
           </div>
         </div>
         <br />
         <div className="d-grid col-4 mx-auto">
-          <button type="submit" className="btn btn-success d-grid mx-auto">Add Submission</button>
+          <button type="submit" className="btn btn-success d-grid mx-auto">
+            Add Submission
+          </button>
         </div>
       </form>
     </div>

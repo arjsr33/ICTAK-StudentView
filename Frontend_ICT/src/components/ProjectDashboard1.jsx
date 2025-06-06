@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import WeeklySubmission from './WeeklySubmission';
-import axios from 'axios';
 import FinalProjectSubmission from './FinalProjectSubmission';
 import { useLocation, useNavigate } from 'react-router-dom';
 import VivaVoce from './VivaVoce';
@@ -8,6 +7,7 @@ import DiscussionForum from './DiscussionForum';
 import References from './References';
 import Grades from './Grades';
 import ProjectOverview from './ProjectOverview';
+import api from '../services/api';
 
 const ProjectDashboard1 = () => {
   const [isConditionMet, setIsConditionMet] = useState(false);
@@ -25,29 +25,32 @@ const ProjectDashboard1 = () => {
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
-        const token = localStorage.getItem('token'); // Retrieve the token from local storage
-        if (!token) {
-          throw new Error('No token found');
+        // Check authentication using the API utility
+        if (!api.utils.isAuthenticated()) {
+          alert('Session expired. Please log in again.');
+          navigate('/login');
+          return;
         }
-        const res = await axios.get(`https://arjun-ictak.vercel.app/api/princy/studentswithprojects/${s_id}`, {
-          headers: {
-            Authorization: `Bearer ${token}` // Include the token in the headers
-          }
-        });
-        console.log('Student data fetched:', res.data[0]);
+
+        const res = await api.student.getStudentsWithProjects(s_id);
+        console.log('Student data fetched:', res[0]); // Fixed: removed .data
+
         setStudent({
-          sp_id: res.data[0].sp_id,
-          sp_name: res.data[0].sp_name,
-          p_id: res.data[0].p_id,
-          p_name: res.data[0].p_name,
-          start_date: res.data[0].start_date
+          sp_id: res[0].sp_id,
+          sp_name: res[0].sp_name,
+          p_id: res[0].p_id,
+          p_name: res[0].p_name,
+          start_date: res[0].start_date
         });
       } catch (error) {
         console.error('Error fetching student data:', error);
-        if (error.response && error.response.status === 401) {
-          alert('Session expired. Please log in again.');
-          localStorage.removeItem('token'); // Remove invalid token
-          navigate('/login'); // Redirect to login page
+        const errorMessage = api.utils.handleError(error);
+        alert(errorMessage);
+        
+        // Handle authentication errors
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          api.utils.removeToken();
+          navigate('/login');
         }
       }
     };
@@ -72,7 +75,6 @@ const ProjectDashboard1 = () => {
 
   return (
     <div>
-
       <h2 className="text-primary py-2 text-center"><b><u>PROJECT DASHBOARD</u></b></h2>
       <h4 className="py-2 text-center">
         <u>
