@@ -1248,7 +1248,7 @@ section:not(.hero-section) {
 
 .contact-item:hover {
   justify-content: center;
-  background: rgba(255, 107, 53, 0.05); /* Very subtle orange tint */
+  background: rgba(228, 98, 50, 0.05); /* Very subtle orange tint */
   border-left: 3px solid #ff6b35; /* Orange accent border */
   transform: translateX(8px);
 }
